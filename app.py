@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from PIL import Image
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_train_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
@@ -27,26 +27,26 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* App Background */
+/* Main Background */
 .stApp {
-    background-color: #F4F7F9;
+    background-color: #F8FAFC;
 }
 
-/* Center and bound content container */
+/* Container Spacing */
 .block-container {
-    max-width: 1100px !important;
-    padding-top: 2rem !important;
+    max-width: 1150px !important;
+    padding-top: 1.5rem !important;
     padding-bottom: 3rem !important;
 }
 
-/* HERO SECTION CARD */
-.hero-card {
-    background: linear-gradient(135deg, #E0F2FE 0%, #E6F4F1 100%);
-    border: 1px solid #BEE3F8;
+/* Hero Section Banner */
+.hero-box {
+    background: linear-gradient(135deg, #E0F2FE 0%, #F0FDFA 100%);
+    border: 1px solid #BAE6FD;
     border-radius: 20px;
-    padding: 30px 35px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    padding: 32px 36px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(2, 132, 199, 0.05);
 }
 
 .badge {
@@ -54,47 +54,48 @@ st.markdown("""
     background-color: #0284C7;
     color: #FFFFFF;
     border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 5px 14px;
+    font-size: 12px;
     font-weight: 700;
     margin-bottom: 12px;
+    letter-spacing: 0.3px;
 }
 
 .hero-title {
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 800;
     color: #0F172A;
     line-height: 1.2;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     letter-spacing: -0.5px;
 }
 
 .hero-text {
     color: #334155;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.6;
-    max-width: 520px;
+    max-width: 540px;
 }
 
-/* Section Headings */
+/* Headings */
 .section-title {
     color: #0F172A;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .section-subtitle {
     color: #64748B;
     font-size: 13px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
-/* Input Form Controls Styling */
+/* Input Fields Styling */
 label {
     color: #1E293B !important;
     font-weight: 600 !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
 }
 
 div[data-baseweb="select"] > div {
@@ -109,18 +110,19 @@ input {
     background-color: #FFFFFF !important;
 }
 
-/* Primary Action Button */
+/* Action Button */
 .stButton > button {
     width: 100%;
     height: 48px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
     background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
-    margin-top: 10px;
+    margin-top: 8px;
+    transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
@@ -128,23 +130,23 @@ input {
     color: #FFFFFF;
 }
 
-/* Output Card Styling */
+/* Result Card */
 .result-card {
     background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
     border-radius: 18px;
     padding: 30px;
-    min-height: 295px;
+    min-height: 290px;
     color: #FFFFFF;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .result-heading {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .result-subtitle {
@@ -153,25 +155,25 @@ input {
 }
 
 .result-price {
-    font-size: 44px;
+    font-size: 42px;
     font-weight: 800;
     color: #38BDF8;
-    margin-top: 20px;
+    margin-top: 15px;
     letter-spacing: -1px;
 }
 
-/* Performance Metric Cards */
+/* Metric Cards */
 .info-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .info-title {
     color: #64748B;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -179,22 +181,22 @@ input {
 
 .info-value {
     color: #0F172A;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
-    margin-top: 6px;
+    margin-top: 4px;
 }
 
 .footer {
     text-align: center;
     color: #94A3B8;
     font-size: 13px;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 hr {
     border: none;
     border-top: 1px solid #E2E8F0;
-    margin: 30px 0;
+    margin: 28px 0;
 }
 
 </style>
@@ -267,17 +269,19 @@ r2 = r2_score(y_test, test_predictions)
 mae = mean_absolute_error(y_test, test_predictions)
 
 # =========================================================
-# HERO SECTION (LOCAL IMAGE EMBEDDING)
+# HERO SECTION
 # =========================================================
 
-hero_col1, hero_col2 = st.columns([1.2, 1], gap="medium")
+hero_col1, hero_col2 = st.columns([1.35, 1], gap="medium")
 
 with hero_col1:
     st.markdown("""
-    <div class="hero-card" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-        <div class="badge">✦ ML Powered Healthcare</div>
-        <div class="hero-title">Medical Insurance Cost Predictor</div>
-        <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
+    <div class="hero-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <div>
+            <div class="badge">✦ ML Powered Healthcare</div>
+            <div class="hero-title">Medical Insurance Cost Predictor</div>
+            <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -287,8 +291,7 @@ with hero_col2:
         image = Image.open(image_path)
         st.image(image, use_container_width=True)
     else:
-        # Fallback in case image file is not found in repository
-        st.info("💡 `hero.png` image repository mein upload karein.")
+        st.info("💡 `hero.png` image repository mein uploaded hai.")
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -356,7 +359,7 @@ with right_col:
     <div class="result-heading">Prediction Result</div>
     <div class="result-subtitle">Your estimated annual medical insurance cost</div>
 </div>
-<div style="margin-top:25px; opacity:0.85; line-height:1.6; font-size: 15px;">
+<div style="margin-top:25px; opacity:0.85; line-height:1.6; font-size: 14px;">
 Enter details on the left and click "Predict Insurance Cost" to view the calculated estimate.
 </div>
 <div style="font-size: 12px; opacity: 0.5;">Awaiting user input...</div>
