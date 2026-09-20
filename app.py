@@ -19,7 +19,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Helper function to convert local image to Base64 for CSS background
+# Helper function to convert local image to Base64
 def get_base64_of_bin_file(bin_file):
     if os.path.exists(bin_file):
         with open(bin_file, 'rb') as f:
@@ -27,9 +27,7 @@ def get_base64_of_bin_file(bin_file):
         return base64.b64encode(data).decode()
     return ""
 
-# Save your banner image as 'hero_banner.png' in the same folder as app.py
 img_base64 = get_base64_of_bin_file("hero_banner.png")
-banner_bg = f"url('data:image/png;base64,{img_base64}')" if img_base64 else "#DDF5F3"
 
 # =========================================================
 # CSS STYLING
@@ -39,69 +37,80 @@ st.markdown(f"""
 <style>
 
 .stApp {{
-    background: #F7FAFC;
+    background: #F4F8FA;
 }}
 
 .block-container {{
     max-width: 1150px;
-    padding-top: 35px;
+    padding-top: 30px;
     padding-bottom: 40px;
 }}
 
 /* HERO SECTION */
 
-.hero {{
-    background: linear-gradient(135deg, #EAF8F7 0%, #F4FBFC 100%);
-    border: 1px solid #D8ECEE;
+.hero-container {{
+    background: linear-gradient(135deg, #E6F7F5 0%, #F0F9FF 100%);
+    border: 1px solid #D2E9E6;
     border-radius: 24px;
-    padding: 38px 42px;
+    padding: 40px 45px;
     margin-bottom: 35px;
+    box-shadow: 0 10px 30px rgba(8, 127, 115, 0.05);
 }}
 
 .badge {{
-    display: inline-block;
-    background: #D5F4EE;
-    color: #087C70;
-    border-radius: 25px;
-    padding: 7px 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #D1F2EC;
+    color: #087F73;
+    border-radius: 20px;
+    padding: 6px 14px;
     font-size: 13px;
     font-weight: 700;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }}
 
 .hero-title {{
-    font-size: 38px;
+    font-size: 42px;
     font-weight: 800;
-    color: #123B5D;
+    color: #0F324D;
     line-height: 1.15;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
+    letter-spacing: -0.5px;
 }}
 
 .hero-text {{
-    color: #64798A;
+    color: #5A7184;
     font-size: 15px;
     line-height: 1.7;
-    max-width: 500px;
+    max-width: 520px;
 }}
 
 /* HERO ILLUSTRATION */
 
 .medical-art {{
-    height: 220px;
+    height: 230px;
+    width: 100%;
     border-radius: 20px;
-    background-image: {banner_bg};
+    {"background-image: url('data:image/png;base64," + img_base64 + "');" if img_base64 else ""}
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }}
 
-/* SECTIONS & HEADINGS */
+/* HEADINGS */
 
 .section-title {{
-    color: #123B5D;
+    color: #0F324D;
     font-size: 22px;
     font-weight: 800;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }}
 
 .section-subtitle {{
@@ -113,67 +122,75 @@ st.markdown(f"""
 /* INPUT CARD */
 
 .card {{
-    background: white;
-    border: 1px solid #E0E8ED;
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0 5px 18px rgba(18,59,93,0.04);
+    background: #FFFFFF;
+    border: 1px solid #E1E8ED;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(15, 50, 77, 0.04);
 }}
 
 .card-subtitle {{
     color: #7A8B98;
     font-size: 13px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }}
 
 /* INPUT FORM ELEMENTS */
 
 label {{
-    color: #29485E !important;
+    color: #1A3850 !important;
     font-weight: 600 !important;
+    font-size: 14px !important;
 }}
 
 div[data-baseweb="select"] > div {{
-    border-radius: 10px;
-    border-color: #D8E2E8;
+    border-radius: 12px !important;
+    border-color: #D6E0E6 !important;
 }}
 
 input {{
-    border-radius: 10px !important;
+    border-radius: 12px !important;
+    border-color: #D6E0E6 !important;
 }}
 
 /* BUTTON STYLING */
 
 .stButton > button {{
     width: 100%;
-    height: 50px;
-    border-radius: 11px;
+    height: 52px;
+    border-radius: 12px;
     border: none;
-    background: #087F73;
+    background: linear-gradient(135deg, #087F73 0%, #066C63 100%);
     color: white;
     font-size: 16px;
     font-weight: 700;
+    box-shadow: 0 6px 18px rgba(8, 127, 115, 0.25);
+    transition: all 0.3s ease;
 }}
 
 .stButton > button:hover {{
-    background: #066C63;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(8, 127, 115, 0.35);
     color: white;
 }}
 
 /* PREDICTION CARD */
 
 .result-card {{
-    background: #0F4C64;
+    background: linear-gradient(145deg, #0B3A53 0%, #0F4C64 100%);
     border-radius: 20px;
-    padding: 32px;
-    min-height: 280px;
+    padding: 35px;
+    min-height: 310px;
     color: white;
-    box-shadow: 0 10px 25px rgba(18,59,93,0.12);
+    box-shadow: 0 12px 28px rgba(15, 76, 100, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }}
 
 .result-heading {{
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 800;
     margin-bottom: 6px;
 }}
 
@@ -183,47 +200,49 @@ input {{
 }}
 
 .result-price {{
-    font-size: 42px;
+    font-size: 46px;
     font-weight: 800;
-    margin-top: 40px;
+    color: #4DE1C1;
+    margin-top: 30px;
+    letter-spacing: -1px;
 }}
 
-/* INFO CARDS */
+/* METRIC / INFO CARDS */
 
 .info-card {{
-    background: white;
-    border: 1px solid #E0E8ED;
+    background: #FFFFFF;
+    border: 1px solid #E1E8ED;
     border-radius: 16px;
-    padding: 20px;
-    min-height: 120px;
+    padding: 22px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
 }}
 
 .info-title {{
-    color: #123B5D;
-    font-size: 16px;
-    font-weight: 750;
-}}
-
-.info-text {{
-    color: #788995;
+    color: #7A8B98;
     font-size: 13px;
-    margin-top: 8px;
-    line-height: 1.5;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }}
 
-/* FOOTER */
+.info-value {{
+    color: #0F324D;
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 6px;
+}}
 
 .footer {{
     text-align: center;
     color: #94A2AC;
-    font-size: 12px;
-    margin-top: 30px;
+    font-size: 13px;
+    margin-top: 40px;
 }}
 
 hr {{
     border: none;
-    border-top: 1px solid #DCE6EB;
-    margin: 32px 0;
+    border-top: 1px solid #E1E8ED;
+    margin: 35px 0;
 }}
 
 </style>
@@ -300,15 +319,27 @@ mae = mean_absolute_error(y_test, test_predictions)
 # HERO SECTION
 # =========================================================
 
-hero1, hero2 = st.columns([1.4, 1], gap="large")
+hero1, hero2 = st.columns([1.35, 1], gap="large")
 
 with hero1:
-    st.markdown('<div class="badge">+ ML Powered</div>', unsafe_allow_html=True)
+    st.markdown('<div class="badge">✦ ML Powered Healthcare</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-title">Medical Insurance Cost<br>Predictor</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-text">Estimate your medical insurance cost using a machine learning model trained on historical healthcare data. Get a quick estimate based on your personal information.</div>', unsafe_allow_html=True)
 
 with hero2:
-    st.markdown('<div class="medical-art"></div>', unsafe_allow_html=True)
+    if img_base64:
+        st.markdown('<div class="medical-art"></div>', unsafe_allow_html=True)
+    else:
+        # High quality inline vector SVG fallback if image is missing
+        st.markdown("""
+        <div style="text-align: center; padding: 20px;">
+            <svg width="220" height="180" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="160" rx="16" fill="#E0F2FE"/>
+                <path d="M100 40C70 40 50 60 50 90C50 120 100 140 100 140C100 140 150 120 150 90C150 60 130 40 100 40Z" fill="#38BDF8" opacity="0.3"/>
+                <path d="M85 85H115M100 70V100" stroke="#0284C7" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.write("")
 
@@ -322,7 +353,7 @@ with left_header:
     st.markdown('<div class="section-title">👤 Personal Information</div>', unsafe_allow_html=True)
 
 with right_header:
-    st.markdown('<div class="section-title">💰 Prediction</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">💰 Prediction Result</div>', unsafe_allow_html=True)
 
 
 left, right = st.columns([1.05, 0.95], gap="large")
@@ -330,7 +361,7 @@ left, right = st.columns([1.05, 0.95], gap="large")
 # INPUT FORM
 with left:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-subtitle">Please enter your details to estimate the insurance cost.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-subtitle">Please enter your details below to estimate the insurance cost.</div>', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
@@ -351,7 +382,7 @@ with left:
         region = st.selectbox("Region", ["Northeast", "Northwest", "Southeast", "Southwest"])
 
     st.write("")
-    predict = st.button("💰 Predict Insurance Cost")
+    predict = st.button(" Predict Insurance Cost")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # RESULT CARD
@@ -369,20 +400,26 @@ with right:
 
         st.markdown(
             f"""<div class="result-card">
-<div class="result-heading">Prediction Result</div>
-<div class="result-subtitle">Your estimated annual medical insurance cost</div>
+<div>
+    <div class="result-heading">Estimated Charges</div>
+    <div class="result-subtitle">Calculated annual medical insurance estimate</div>
+</div>
 <div class="result-price">${prediction:,.2f}</div>
+<div style="font-size: 12px; opacity: 0.7;">Based on Linear Regression Model</div>
 </div>""",
             unsafe_allow_html=True
         )
     else:
         st.markdown(
             """<div class="result-card">
-<div class="result-heading">Prediction Result</div>
-<div class="result-subtitle">Your estimated annual medical insurance cost</div>
-<div style="margin-top:35px; opacity:0.75; line-height:1.6;">
-Enter the information and click "Predict Insurance Cost".
+<div>
+    <div class="result-heading">Prediction Result</div>
+    <div class="result-subtitle">Your estimated annual medical insurance cost</div>
 </div>
+<div style="margin-top:25px; opacity:0.8; line-height:1.6; font-size: 15px;">
+Enter the patient information on the left and click "Predict Insurance Cost" to view the estimated charges.
+</div>
+<div style="font-size: 12px; opacity: 0.5;">Awaiting input...</div>
 </div>""",
             unsafe_allow_html=True
         )
@@ -392,24 +429,24 @@ Enter the information and click "Predict Insurance Cost".
 # =========================================================
 
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown('<div class="section-title">📊 Model Performance</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-subtitle">Performance of the trained regression model on test data.</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">📊 Model Metrics & Performance</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-subtitle">Evaluation metrics of the trained regression model on the test dataset.</div>', unsafe_allow_html=True)
 
 m1, m2, m3, m4 = st.columns(4)
 
 with m1:
-    st.markdown(f"""<div class="info-card"><div class="info-title">🤖 Algorithm</div><div class="info-text">Linear Regression</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="info-card"><div class="info-title">Algorithm</div><div class="info-value">Linear Regression</div></div>""", unsafe_allow_html=True)
 
 with m2:
-    st.markdown(f"""<div class="info-card"><div class="info-title">📈 R² Score</div><div class="info-text">{r2:.3f}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="info-card"><div class="info-title">R² Score</div><div class="info-value">{r2:.3f}</div></div>""", unsafe_allow_html=True)
 
 with m3:
-    st.markdown(f"""<div class="info-card"><div class="info-title">📉 MAE</div><div class="info-text">${mae:,.0f}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="info-card"><div class="info-title">MAE</div><div class="info-value">${mae:,.0f}</div></div>""", unsafe_allow_html=True)
 
 with m4:
-    st.markdown(f"""<div class="info-card"><div class="info-title">📚 Records</div><div class="info-text">{len(df):,} records</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="info-card"><div class="info-title">Dataset Size</div><div class="info-value">{len(df):,} rows</div></div>""", unsafe_allow_html=True)
 
-# DISCLAIMER & FOOTER
+# FOOTER
 st.markdown("<hr>", unsafe_allow_html=True)
 st.warning("⚠️ **Disclaimer:** This application is an educational machine learning project. The prediction is an estimate and should not be treated as an actual insurance quote.")
-st.markdown('<div class="footer">Medical Insurance Cost Prediction · Machine Learning Project</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">Medical Insurance Cost Prediction · Machine Learning Portfolio Project</div>', unsafe_allow_html=True)
