@@ -26,27 +26,25 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* App layout fix */
+/* App Background */
 .stApp {
-    background-color: #F7FAFC;
+    background-color: #F8FAFC;
 }
 
+/* Center and bound content container */
 .block-container {
-    max-width: 1280px !important;
-    padding-top: 20px !important;
-    padding-bottom: 40px !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    max-width: 1100px !important;
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
 }
 
-/* Hero Section */
-.hero-card {
-    background: linear-gradient(135deg, #EBF8F6 0%, #F3F9FE 100%);
+/* Hero Section Banner */
+.hero-box {
+    background: linear-gradient(135deg, #E6F7F5 0%, #F0F9FF 100%);
     border: 1px solid #D2E9E6;
     border-radius: 20px;
-    padding: 32px 40px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 20px rgba(8, 127, 115, 0.04);
+    padding: 35px 40px;
+    margin-bottom: 30px;
 }
 
 .badge {
@@ -61,10 +59,10 @@ st.markdown("""
 }
 
 .hero-title {
-    font-size: 38px;
+    font-size: 36px;
     font-weight: 800;
     color: #0F324D;
-    line-height: 1.15;
+    line-height: 1.2;
     margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
@@ -73,21 +71,24 @@ st.markdown("""
     color: #5A7184;
     font-size: 15px;
     line-height: 1.6;
-    max-width: 580px;
+    max-width: 550px;
 }
 
-/* Headings */
+/* Section Headings */
 .section-title {
     color: #0F324D;
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    margin-bottom: 6px;
 }
 
-/* Input Form Styling */
+.section-subtitle {
+    color: #7A8B98;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* Input Form Controls Styling */
 label {
     color: #1A3850 !important;
     font-weight: 600 !important;
@@ -96,43 +97,42 @@ label {
 
 div[data-baseweb="select"] > div {
     border-radius: 10px !important;
-    border-color: #D6E0E6 !important;
+    border-color: #CBD5E1 !important;
     background-color: #FFFFFF !important;
 }
 
 input {
     border-radius: 10px !important;
-    border-color: #D6E0E6 !important;
+    border-color: #CBD5E1 !important;
     background-color: #FFFFFF !important;
 }
 
-/* Button */
+/* Primary Action Button */
 .stButton > button {
     width: 100%;
-    height: 50px;
-    border-radius: 12px;
+    height: 48px;
+    border-radius: 10px;
     border: none;
     background: linear-gradient(135deg, #087F73 0%, #066C63 100%);
-    color: white;
+    color: #FFFFFF;
     font-size: 16px;
     font-weight: 700;
-    box-shadow: 0 6px 18px rgba(8, 127, 115, 0.22);
+    box-shadow: 0 4px 14px rgba(8, 127, 115, 0.25);
     margin-top: 10px;
-    transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
     background: linear-gradient(135deg, #066C63 0%, #04524B 100%);
-    color: white;
+    color: #FFFFFF;
 }
 
-/* Prediction Card */
+/* Output Card Styling */
 .result-card {
     background: linear-gradient(145deg, #0B3A53 0%, #0F4C64 100%);
-    border-radius: 20px;
-    padding: 32px;
-    min-height: 290px;
-    color: white;
+    border-radius: 18px;
+    padding: 30px;
+    min-height: 295px;
+    color: #FFFFFF;
     box-shadow: 0 10px 25px rgba(15, 76, 100, 0.15);
     display: flex;
     flex-direction: column;
@@ -146,29 +146,29 @@ input {
 }
 
 .result-subtitle {
-    font-size: 14px;
+    font-size: 13px;
     opacity: 0.8;
 }
 
 .result-price {
-    font-size: 46px;
+    font-size: 44px;
     font-weight: 800;
     color: #4DE1C1;
     margin-top: 20px;
     letter-spacing: -1px;
 }
 
-/* Metric Cards */
+/* Performance Metric Cards */
 .info-card {
     background: #FFFFFF;
-    border: 1px solid #E1E8ED;
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .info-title {
-    color: #7A8B98;
+    color: #64748B;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
@@ -184,15 +184,15 @@ input {
 
 .footer {
     text-align: center;
-    color: #94A2AC;
+    color: #94A3B8;
     font-size: 13px;
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 hr {
     border: none;
-    border-top: 1px solid #E1E8ED;
-    margin: 32px 0;
+    border-top: 1px solid #E2E8F0;
+    margin: 30px 0;
 }
 
 </style>
@@ -218,10 +218,10 @@ def load_dataset():
 df = load_dataset()
 
 if df is None:
-    st.error("⚠️ insurance.csv file nahi mili. Kripya isko app folder mein rakhein.")
+    st.error("⚠️ `insurance.csv` repository mein nahi mila. Direct root folder mein push karein.")
     st.stop()
 
-# Clean columns
+# Clean column headers
 df.columns = df.columns.str.strip().str.lower()
 if "expenses" in df.columns and "charges" not in df.columns:
     df = df.rename(columns={"expenses": "charges"})
@@ -230,7 +230,7 @@ required_columns = ["age", "sex", "bmi", "children", "smoker", "region", "charge
 missing = [col for col in required_columns if col not in df.columns]
 
 if missing:
-    st.error("Dataset columns missing hain: " + ", ".join(missing))
+    st.error("Dataset columns missing: " + ", ".join(missing))
     st.stop()
 
 # =========================================================
@@ -268,41 +268,31 @@ mae = mean_absolute_error(y_test, test_predictions)
 # HERO SECTION
 # =========================================================
 
-hero1, hero2 = st.columns([1.4, 1], gap="large")
+hero_col1, hero_col2 = st.columns([1.3, 1], gap="medium")
 
-with hero1:
+with hero_col1:
     st.markdown('<div class="badge">✦ ML Powered Healthcare</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-title">Medical Insurance Cost<br>Predictor</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-text">Estimate your medical insurance cost using a machine learning model trained on historical healthcare data. Get a quick estimate based on your personal information.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>', unsafe_allow_html=True)
 
-with hero2:
-    # Embedded Vector Art (Direct SVG)
-    st.markdown("""
-    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-        <svg width="340" height="190" viewBox="0 0 340 190" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="340" height="190" rx="18" fill="#E2F4F2"/>
-            <path d="M120 40C80 40 50 70 50 110C50 150 120 170 120 170C120 170 190 150 190 110C190 70 160 40 120 40Z" fill="#2DD4BF" opacity="0.25"/>
-            <circle cx="230" cy="95" r="50" fill="#087F73" opacity="0.15"/>
-            <rect x="105" y="80" width="30" height="50" rx="6" fill="#087F73"/>
-            <rect x="95" y="90" width="50" height="30" rx="6" fill="#087F73"/>
-            <path d="M200 120C200 100 220 85 240 85C260 85 280 100 280 120" stroke="#0F4C64" stroke-width="6" stroke-linecap="round"/>
-            <circle cx="240" cy="65" r="14" fill="#0F4C64"/>
-            <path d="M40 70Q60 50 80 70T120 70" stroke="#2DD4BF" stroke-width="4" stroke-linecap="round" fill="none"/>
-        </svg>
-    </div>
-    """, unsafe_allow_html=True)
+with hero_col2:
+    # Reliable CDN Image URL for clean doctor/healthcare illustration
+    st.image(
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+        use_container_width=True
+    )
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # =========================================================
-# MAIN CONTENT (FORM & RESULT)
+# MAIN SECTION (INPUTS & RESULT)
 # =========================================================
 
-left, right = st.columns([1.1, 0.9], gap="large")
+left_col, right_col = st.columns([1.05, 0.95], gap="large")
 
-with left:
+with left_col:
     st.markdown('<div class="section-title">👤 Personal Information</div>', unsafe_allow_html=True)
-    st.caption("Please enter your details below to estimate the insurance cost.")
+    st.markdown('<div class="section-subtitle">Please enter your details below to estimate the insurance cost.</div>', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
@@ -325,9 +315,9 @@ with left:
     st.write("")
     predict = st.button("Predict Insurance Cost")
 
-with right:
+with right_col:
     st.markdown('<div class="section-title">💰 Prediction Result</div>', unsafe_allow_html=True)
-    st.caption("Your estimated annual medical insurance cost.")
+    st.markdown('<div class="section-subtitle">Your estimated annual medical insurance cost.</div>', unsafe_allow_html=True)
 
     if predict:
         user_data = pd.DataFrame({
@@ -359,7 +349,7 @@ with right:
     <div class="result-subtitle">Your estimated annual medical insurance cost</div>
 </div>
 <div style="margin-top:25px; opacity:0.85; line-height:1.6; font-size: 15px;">
-Enter the details on the left and click "Predict Insurance Cost" to generate the estimate.
+Enter details on the left and click "Predict Insurance Cost" to view the calculated estimate.
 </div>
 <div style="font-size: 12px; opacity: 0.5;">Awaiting user input...</div>
 </div>""",
@@ -367,12 +357,12 @@ Enter the details on the left and click "Predict Insurance Cost" to generate the
         )
 
 # =========================================================
-# MODEL METRICS
+# MODEL PERFORMANCE METRICS
 # =========================================================
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown('<div class="section-title">📊 Model Metrics & Performance</div>', unsafe_allow_html=True)
-st.caption("Evaluation metrics of the trained regression model on the test dataset.")
+st.markdown('<div class="section-subtitle">Evaluation metrics of the trained regression model on the test dataset.</div>', unsafe_allow_html=True)
 
 m1, m2, m3, m4 = st.columns(4)
 
