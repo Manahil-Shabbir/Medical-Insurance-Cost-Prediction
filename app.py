@@ -28,7 +28,7 @@ st.markdown("""
 
 /* App Background */
 .stApp {
-    background-color: #F8FAFC;
+    background-color: #F4F7F9;
 }
 
 /* Center and bound content container */
@@ -38,19 +38,20 @@ st.markdown("""
     padding-bottom: 3rem !important;
 }
 
-/* Hero Section Banner */
-.hero-box {
-    background: linear-gradient(135deg, #E6F7F5 0%, #F0F9FF 100%);
-    border: 1px solid #D2E9E6;
+/* HERO SECTION CARD FIX - Visible Container */
+.hero-card {
+    background: linear-gradient(135deg, #E0F2FE 0%, #E6F4F1 100%);
+    border: 1px solid #BEE3F8;
     border-radius: 20px;
     padding: 35px 40px;
     margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
 
 .badge {
     display: inline-block;
-    background-color: #D1F2EC;
-    color: #087F73;
+    background-color: #0284C7;
+    color: #FFFFFF;
     border-radius: 20px;
     padding: 6px 14px;
     font-size: 13px;
@@ -61,14 +62,14 @@ st.markdown("""
 .hero-title {
     font-size: 36px;
     font-weight: 800;
-    color: #0F324D;
+    color: #0F172A;
     line-height: 1.2;
     margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
 
 .hero-text {
-    color: #5A7184;
+    color: #334155;
     font-size: 15px;
     line-height: 1.6;
     max-width: 550px;
@@ -76,21 +77,21 @@ st.markdown("""
 
 /* Section Headings */
 .section-title {
-    color: #0F324D;
+    color: #0F172A;
     font-size: 20px;
     font-weight: 800;
     margin-bottom: 6px;
 }
 
 .section-subtitle {
-    color: #7A8B98;
+    color: #64748B;
     font-size: 13px;
     margin-bottom: 20px;
 }
 
 /* Input Form Controls Styling */
 label {
-    color: #1A3850 !important;
+    color: #1E293B !important;
     font-weight: 600 !important;
     font-size: 14px !important;
 }
@@ -113,27 +114,27 @@ input {
     height: 48px;
     border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, #087F73 0%, #066C63 100%);
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(8, 127, 115, 0.25);
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
     margin-top: 10px;
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #066C63 0%, #04524B 100%);
+    background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
     color: #FFFFFF;
 }
 
 /* Output Card Styling */
 .result-card {
-    background: linear-gradient(145deg, #0B3A53 0%, #0F4C64 100%);
+    background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
     border-radius: 18px;
     padding: 30px;
     min-height: 295px;
     color: #FFFFFF;
-    box-shadow: 0 10px 25px rgba(15, 76, 100, 0.15);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -153,7 +154,7 @@ input {
 .result-price {
     font-size: 44px;
     font-weight: 800;
-    color: #4DE1C1;
+    color: #38BDF8;
     margin-top: 20px;
     letter-spacing: -1px;
 }
@@ -176,7 +177,7 @@ input {
 }
 
 .info-value {
-    color: #0F324D;
+    color: #0F172A;
     font-size: 22px;
     font-weight: 800;
     margin-top: 6px;
@@ -265,24 +266,31 @@ r2 = r2_score(y_test, test_predictions)
 mae = mean_absolute_error(y_test, test_predictions)
 
 # =========================================================
-# HERO SECTION
+# HERO SECTION (WITH VISIBLE BOX & HIGH QUALITY VECTOR SVG)
 # =========================================================
 
-hero_col1, hero_col2 = st.columns([1.3, 1], gap="medium")
-
-with hero_col1:
-    st.markdown('<div class="badge">✦ ML Powered Healthcare</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-title">Medical Insurance Cost<br>Predictor</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>', unsafe_allow_html=True)
-
-with hero_col2:
-    # Reliable CDN Image URL for clean doctor/healthcare illustration
-    st.image(
-        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-        use_container_width=True
-    )
-
-st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("""
+<div class="hero-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+        <div style="flex: 1; min-width: 300px;">
+            <div class="badge">✦ ML Powered Healthcare</div>
+            <div class="hero-title">Medical Insurance Cost Predictor</div>
+            <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
+        </div>
+        <div style="flex: 0.8; min-width: 260px; text-align: center;">
+            <svg width="280" height="170" viewBox="0 0 300 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="180" rx="16" fill="#FFFFFF" fill-opacity="0.6"/>
+                <path d="M70 90C70 65 90 45 115 45C140 45 160 65 160 90C160 120 115 145 115 145C115 145 70 120 70 90Z" fill="#0284C7" fill-opacity="0.15"/>
+                <path d="M115 65V115M90 90H140" stroke="#0284C7" stroke-width="8" stroke-linecap="round"/>
+                <circle cx="210" cy="80" r="35" fill="#38BDF8" fill-opacity="0.2"/>
+                <path d="M190 125C190 105 200 95 210 95C220 95 230 105 230 125" stroke="#0F172A" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="210" cy="70" r="12" fill="#0F172A"/>
+                <path d="M40 135L60 120L75 130L95 110" stroke="#0284C7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # =========================================================
 # MAIN SECTION (INPUTS & RESULT)
