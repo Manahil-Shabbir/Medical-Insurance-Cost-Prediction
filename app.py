@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import base64
 from PIL import Image
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_train_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
@@ -40,15 +40,23 @@ img_base64 = get_base64_image("hero.png")
 st.markdown("""
 <style>
 
-/* Main Background */
+/* Hide Streamlit Default Header and Decoration Bar */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+
+/* Main App Background */
 .stApp {
     background-color: #F8FAFC;
 }
 
-/* Container Spacing */
+/* Container Spacing & Top Padding Fix */
 .block-container {
-    max-width: 1100px !important;
-    padding-top: 1.5rem !important;
+    max-width: 1080px !important;
+    padding-top: 4rem !important;
     padding-bottom: 3rem !important;
 }
 
@@ -57,13 +65,14 @@ st.markdown("""
     background: linear-gradient(135deg, #E0F2FE 0%, #F0FDFA 100%);
     border: 1px solid #BAE6FD;
     border-radius: 20px;
-    padding: 28px 32px;
-    margin-bottom: 25px;
+    padding: 32px 36px;
+    margin-top: 10px;
+    margin-bottom: 30px;
     box-shadow: 0 4px 20px rgba(2, 132, 199, 0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 24px;
 }
 
 .hero-text-content {
