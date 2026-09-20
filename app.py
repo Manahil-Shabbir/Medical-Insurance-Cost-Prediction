@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import base64
 from PIL import Image
-from sklearn.model_selection import train_train_split
+from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
