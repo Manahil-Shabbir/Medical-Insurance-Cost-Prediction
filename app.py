@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import base64
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -19,231 +18,174 @@ st.set_page_config(
     layout="wide"
 )
 
-# Helper function to convert local image to Base64
-def get_base64_of_bin_file(bin_file):
-    if os.path.exists(bin_file):
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    return ""
-
-img_base64 = get_base64_of_bin_file("hero_banner.png")
-
 # =========================================================
 # CSS STYLING
 # =========================================================
 
-st.markdown(f"""
+st.markdown("""
 <style>
 
-.stApp {{
+.stApp {
     background: #F4F8FA;
-}}
+}
 
-.block-container {{
+.block-container {
     max-width: 1150px;
-    padding-top: 30px;
+    padding-top: 25px;
     padding-bottom: 40px;
-}}
+}
 
-/* HERO SECTION */
+/* HERO BADGE & TITLES */
 
-.hero-container {{
-    background: linear-gradient(135deg, #E6F7F5 0%, #F0F9FF 100%);
-    border: 1px solid #D2E9E6;
-    border-radius: 24px;
-    padding: 40px 45px;
-    margin-bottom: 35px;
-    box-shadow: 0 10px 30px rgba(8, 127, 115, 0.05);
-}}
-
-.badge {{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+.badge {
+    display: inline-block;
     background: #D1F2EC;
     color: #087F73;
     border-radius: 20px;
     padding: 6px 14px;
     font-size: 13px;
     font-weight: 700;
-    margin-bottom: 16px;
-}}
+    margin-bottom: 12px;
+}
 
-.hero-title {{
-    font-size: 42px;
+.hero-title {
+    font-size: 38px;
     font-weight: 800;
     color: #0F324D;
     line-height: 1.15;
-    margin-bottom: 14px;
-    letter-spacing: -0.5px;
-}}
+    margin-bottom: 12px;
+}
 
-.hero-text {{
+.hero-text {
     color: #5A7184;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.6;
     max-width: 520px;
-}}
-
-/* HERO ILLUSTRATION */
-
-.medical-art {{
-    height: 230px;
-    width: 100%;
-    border-radius: 20px;
-    {"background-image: url('data:image/png;base64," + img_base64 + "');" if img_base64 else ""}
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}}
+}
 
 /* HEADINGS */
 
-.section-title {{
+.section-title {
     color: #0F324D;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}}
+    margin-bottom: 12px;
+}
 
-.section-subtitle {{
+.section-subtitle {
     color: #7A8B98;
     font-size: 14px;
     margin-bottom: 20px;
-}}
-
-/* INPUT CARD */
-
-.card {{
-    background: #FFFFFF;
-    border: 1px solid #E1E8ED;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 24px rgba(15, 50, 77, 0.04);
-}}
-
-.card-subtitle {{
-    color: #7A8B98;
-    font-size: 13px;
-    margin-bottom: 22px;
-}}
+}
 
 /* INPUT FORM ELEMENTS */
 
-label {{
+label {
     color: #1A3850 !important;
     font-weight: 600 !important;
     font-size: 14px !important;
-}}
+}
 
-div[data-baseweb="select"] > div {{
-    border-radius: 12px !important;
+div[data-baseweb="select"] > div {
+    border-radius: 10px !important;
     border-color: #D6E0E6 !important;
-}}
+}
 
-input {{
-    border-radius: 12px !important;
+input {
+    border-radius: 10px !important;
     border-color: #D6E0E6 !important;
-}}
+}
 
 /* BUTTON STYLING */
 
-.stButton > button {{
+.stButton > button {
     width: 100%;
-    height: 52px;
-    border-radius: 12px;
+    height: 48px;
+    border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, #087F73 0%, #066C63 100%);
+    background: #087F73;
     color: white;
     font-size: 16px;
     font-weight: 700;
-    box-shadow: 0 6px 18px rgba(8, 127, 115, 0.25);
-    transition: all 0.3s ease;
-}}
+    box-shadow: 0 4px 14px rgba(8, 127, 115, 0.2);
+    margin-top: 10px;
+}
 
-.stButton > button:hover {{
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(8, 127, 115, 0.35);
+.stButton > button:hover {
+    background: #066C63;
     color: white;
-}}
+}
 
 /* PREDICTION CARD */
 
-.result-card {{
+.result-card {
     background: linear-gradient(145deg, #0B3A53 0%, #0F4C64 100%);
-    border-radius: 20px;
-    padding: 35px;
-    min-height: 310px;
+    border-radius: 18px;
+    padding: 30px;
+    min-height: 290px;
     color: white;
-    box-shadow: 0 12px 28px rgba(15, 76, 100, 0.2);
+    box-shadow: 0 10px 25px rgba(15, 76, 100, 0.15);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}}
+}
 
-.result-heading {{
-    font-size: 24px;
+.result-heading {
+    font-size: 22px;
     font-weight: 800;
     margin-bottom: 6px;
-}}
+}
 
-.result-subtitle {{
+.result-subtitle {
     font-size: 14px;
     opacity: 0.8;
-}}
+}
 
-.result-price {{
-    font-size: 46px;
+.result-price {
+    font-size: 44px;
     font-weight: 800;
     color: #4DE1C1;
-    margin-top: 30px;
+    margin-top: 25px;
     letter-spacing: -1px;
-}}
+}
 
-/* METRIC / INFO CARDS */
+/* METRIC CARDS */
 
-.info-card {{
+.info-card {
     background: #FFFFFF;
     border: 1px solid #E1E8ED;
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
-}}
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
 
-.info-title {{
+.info-title {
     color: #7A8B98;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}}
+}
 
-.info-value {{
+.info-value {
     color: #0F324D;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     margin-top: 6px;
-}}
+}
 
-.footer {{
+.footer {
     text-align: center;
     color: #94A2AC;
     font-size: 13px;
-    margin-top: 40px;
-}}
+    margin-top: 30px;
+}
 
-hr {{
+hr {
     border: none;
     border-top: 1px solid #E1E8ED;
-    margin: 35px 0;
-}}
+    margin: 30px 0;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -268,8 +210,8 @@ def load_dataset():
 df = load_dataset()
 
 if df is None:
-    st.error("⚠️ insurance.csv was not found in your repository.")
-    st.info("Please upload insurance.csv to the same folder as app.py.")
+    st.error("⚠️ insurance.csv file nahi mili repository mein.")
+    st.info("Kripya insurance.csv ko app.py ke sath wale folder mein upload karein.")
     st.stop()
 
 # Clean columns
@@ -281,7 +223,7 @@ required_columns = ["age", "sex", "bmi", "children", "smoker", "region", "charge
 missing = [col for col in required_columns if col not in df.columns]
 
 if missing:
-    st.error("Dataset columns are missing: " + ", ".join(missing))
+    st.error("Dataset columns missing hain: " + ", ".join(missing))
     st.stop()
 
 # =========================================================
@@ -319,7 +261,7 @@ mae = mean_absolute_error(y_test, test_predictions)
 # HERO SECTION
 # =========================================================
 
-hero1, hero2 = st.columns([1.35, 1], gap="large")
+hero1, hero2 = st.columns([1.3, 1], gap="medium")
 
 with hero1:
     st.markdown('<div class="badge">✦ ML Powered Healthcare</div>', unsafe_allow_html=True)
@@ -327,41 +269,23 @@ with hero1:
     st.markdown('<div class="hero-text">Estimate your medical insurance cost using a machine learning model trained on historical healthcare data. Get a quick estimate based on your personal information.</div>', unsafe_allow_html=True)
 
 with hero2:
-    if img_base64:
-        st.markdown('<div class="medical-art"></div>', unsafe_allow_html=True)
+    img_path = "healthcare_hero_illustration.png"
+    if os.path.exists(img_path):
+        st.image(img_path, use_container_width=True)
     else:
-        # High quality inline vector SVG fallback if image is missing
-        st.markdown("""
-        <div style="text-align: center; padding: 20px;">
-            <svg width="220" height="180" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="200" height="160" rx="16" fill="#E0F2FE"/>
-                <path d="M100 40C70 40 50 60 50 90C50 120 100 140 100 140C100 140 150 120 150 90C150 60 130 40 100 40Z" fill="#38BDF8" opacity="0.3"/>
-                <path d="M85 85H115M100 70V100" stroke="#0284C7" stroke-width="8" stroke-linecap="round"/>
-            </svg>
-        </div>
-        """, unsafe_allow_html=True)
+        st.info("Image file 'healthcare_hero_illustration.png' same directory mein honi chahiye.")
 
-st.write("")
+st.markdown("<hr>", unsafe_allow_html=True)
 
 # =========================================================
 # INPUT / PREDICTION SECTION
 # =========================================================
 
-left_header, right_header = st.columns([1.05, 0.95], gap="large")
-
-with left_header:
-    st.markdown('<div class="section-title">👤 Personal Information</div>', unsafe_allow_html=True)
-
-with right_header:
-    st.markdown('<div class="section-title">💰 Prediction Result</div>', unsafe_allow_html=True)
-
-
 left, right = st.columns([1.05, 0.95], gap="large")
 
 # INPUT FORM
 with left:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-subtitle">Please enter your details below to estimate the insurance cost.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">👤 Personal Information</div>', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
@@ -381,12 +305,12 @@ with left:
     with c2:
         region = st.selectbox("Region", ["Northeast", "Northwest", "Southeast", "Southwest"])
 
-    st.write("")
-    predict = st.button(" Predict Insurance Cost")
-    st.markdown('</div>', unsafe_allow_html=True)
+    predict = st.button("Predict Insurance Cost")
 
 # RESULT CARD
 with right:
+    st.markdown('<div class="section-title">💰 Prediction Result</div>', unsafe_allow_html=True)
+
     if predict:
         user_data = pd.DataFrame({
             "age": [age],
@@ -430,7 +354,6 @@ Enter the patient information on the left and click "Predict Insurance Cost" to 
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown('<div class="section-title">📊 Model Metrics & Performance</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-subtitle">Evaluation metrics of the trained regression model on the test dataset.</div>', unsafe_allow_html=True)
 
 m1, m2, m3, m4 = st.columns(4)
 
