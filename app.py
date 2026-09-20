@@ -38,7 +38,7 @@ st.markdown("""
     padding-bottom: 3rem !important;
 }
 
-/* HERO SECTION CARD FIX - Visible Container */
+/* HERO SECTION CARD */
 .hero-card {
     background: linear-gradient(135deg, #E0F2FE 0%, #E6F4F1 100%);
     border: 1px solid #BEE3F8;
@@ -196,6 +196,14 @@ hr {
     margin: 30px 0;
 }
 
+/* Custom styling for Hero Banner Image */
+.hero-img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -266,7 +274,7 @@ r2 = r2_score(y_test, test_predictions)
 mae = mean_absolute_error(y_test, test_predictions)
 
 # =========================================================
-# HERO SECTION (WITH VISIBLE BOX & HIGH QUALITY VECTOR SVG)
+# HERO SECTION (WITH HIGH-QUALITY HEALTHCARE VECTOR IMAGE)
 # =========================================================
 
 st.markdown("""
@@ -278,15 +286,7 @@ st.markdown("""
             <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
         </div>
         <div style="flex: 0.8; min-width: 260px; text-align: center;">
-            <svg width="280" height="170" viewBox="0 0 300 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="180" rx="16" fill="#FFFFFF" fill-opacity="0.6"/>
-                <path d="M70 90C70 65 90 45 115 45C140 45 160 65 160 90C160 120 115 145 115 145C115 145 70 120 70 90Z" fill="#0284C7" fill-opacity="0.15"/>
-                <path d="M115 65V115M90 90H140" stroke="#0284C7" stroke-width="8" stroke-linecap="round"/>
-                <circle cx="210" cy="80" r="35" fill="#38BDF8" fill-opacity="0.2"/>
-                <path d="M190 125C190 105 200 95 210 95C220 95 230 105 230 125" stroke="#0F172A" stroke-width="5" stroke-linecap="round"/>
-                <circle cx="210" cy="70" r="12" fill="#0F172A"/>
-                <path d="M40 135L60 120L75 130L95 110" stroke="#0284C7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/health-insurance-illustration-download-in-svg-png-gif-file-formats--medical-claim-document-policy-security-pack-services-illustrations-4378772.png" class="hero-img" alt="Medical Insurance Vector Illustration"/>
         </div>
     </div>
 </div>
