@@ -15,31 +15,43 @@ from sklearn.metrics import r2_score, mean_absolute_error
 st.set_page_config(
     page_title="Medical Insurance Cost Predictor",
     page_icon="🏥",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # =========================================================
-# CSS STYLING
+# STYLES AND CUSTOM CSS
 # =========================================================
 
 st.markdown("""
 <style>
 
+/* App layout fix */
 .stApp {
-    background: #F4F8FA;
+    background-color: #F7FAFC;
 }
 
 .block-container {
-    max-width: 1150px;
-    padding-top: 25px;
-    padding-bottom: 40px;
+    max-width: 1280px !important;
+    padding-top: 20px !important;
+    padding-bottom: 40px !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
 }
 
-/* HERO BADGE & TITLES */
+/* Hero Section */
+.hero-card {
+    background: linear-gradient(135deg, #EBF8F6 0%, #F3F9FE 100%);
+    border: 1px solid #D2E9E6;
+    border-radius: 20px;
+    padding: 32px 40px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(8, 127, 115, 0.04);
+}
 
 .badge {
     display: inline-block;
-    background: #D1F2EC;
+    background-color: #D1F2EC;
     color: #087F73;
     border-radius: 20px;
     padding: 6px 14px;
@@ -54,32 +66,28 @@ st.markdown("""
     color: #0F324D;
     line-height: 1.15;
     margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
 .hero-text {
     color: #5A7184;
     font-size: 15px;
     line-height: 1.6;
-    max-width: 520px;
+    max-width: 580px;
 }
 
-/* HEADINGS */
-
+/* Headings */
 .section-title {
     color: #0F324D;
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.section-subtitle {
-    color: #7A8B98;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
-/* INPUT FORM ELEMENTS */
-
+/* Input Form Styling */
 label {
     color: #1A3850 !important;
     font-weight: 600 !important;
@@ -89,39 +97,40 @@ label {
 div[data-baseweb="select"] > div {
     border-radius: 10px !important;
     border-color: #D6E0E6 !important;
+    background-color: #FFFFFF !important;
 }
 
 input {
     border-radius: 10px !important;
     border-color: #D6E0E6 !important;
+    background-color: #FFFFFF !important;
 }
 
-/* BUTTON STYLING */
-
+/* Button */
 .stButton > button {
     width: 100%;
-    height: 48px;
-    border-radius: 10px;
+    height: 50px;
+    border-radius: 12px;
     border: none;
-    background: #087F73;
+    background: linear-gradient(135deg, #087F73 0%, #066C63 100%);
     color: white;
     font-size: 16px;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(8, 127, 115, 0.2);
+    box-shadow: 0 6px 18px rgba(8, 127, 115, 0.22);
     margin-top: 10px;
+    transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
-    background: #066C63;
+    background: linear-gradient(135deg, #066C63 0%, #04524B 100%);
     color: white;
 }
 
-/* PREDICTION CARD */
-
+/* Prediction Card */
 .result-card {
     background: linear-gradient(145deg, #0B3A53 0%, #0F4C64 100%);
-    border-radius: 18px;
-    padding: 30px;
+    border-radius: 20px;
+    padding: 32px;
     min-height: 290px;
     color: white;
     box-shadow: 0 10px 25px rgba(15, 76, 100, 0.15);
@@ -142,21 +151,20 @@ input {
 }
 
 .result-price {
-    font-size: 44px;
+    font-size: 46px;
     font-weight: 800;
     color: #4DE1C1;
-    margin-top: 25px;
+    margin-top: 20px;
     letter-spacing: -1px;
 }
 
-/* METRIC CARDS */
-
+/* Metric Cards */
 .info-card {
     background: #FFFFFF;
     border: 1px solid #E1E8ED;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
 }
 
 .info-title {
@@ -169,7 +177,7 @@ input {
 
 .info-value {
     color: #0F324D;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
     margin-top: 6px;
 }
@@ -184,14 +192,14 @@ input {
 hr {
     border: none;
     border-top: 1px solid #E1E8ED;
-    margin: 30px 0;
+    margin: 32px 0;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
-# LOAD DATASET
+# DATASET LOADING
 # =========================================================
 
 @st.cache_data
@@ -210,8 +218,7 @@ def load_dataset():
 df = load_dataset()
 
 if df is None:
-    st.error("⚠️ insurance.csv file nahi mili repository mein.")
-    st.info("Kripya insurance.csv ko app.py ke sath wale folder mein upload karein.")
+    st.error("⚠️ insurance.csv file nahi mili. Kripya isko app folder mein rakhein.")
     st.stop()
 
 # Clean columns
@@ -227,7 +234,7 @@ if missing:
     st.stop()
 
 # =========================================================
-# TRAIN MODEL
+# MODEL TRAINING
 # =========================================================
 
 X = df[["age", "sex", "bmi", "children", "smoker", "region"]]
@@ -261,7 +268,7 @@ mae = mean_absolute_error(y_test, test_predictions)
 # HERO SECTION
 # =========================================================
 
-hero1, hero2 = st.columns([1.3, 1], gap="medium")
+hero1, hero2 = st.columns([1.4, 1], gap="large")
 
 with hero1:
     st.markdown('<div class="badge">✦ ML Powered Healthcare</div>', unsafe_allow_html=True)
@@ -269,23 +276,33 @@ with hero1:
     st.markdown('<div class="hero-text">Estimate your medical insurance cost using a machine learning model trained on historical healthcare data. Get a quick estimate based on your personal information.</div>', unsafe_allow_html=True)
 
 with hero2:
-    img_path = "healthcare_hero_illustration.png"
-    if os.path.exists(img_path):
-        st.image(img_path, use_container_width=True)
-    else:
-        st.info("Image file 'healthcare_hero_illustration.png' same directory mein honi chahiye.")
+    # Embedded Vector Art (Direct SVG)
+    st.markdown("""
+    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+        <svg width="340" height="190" viewBox="0 0 340 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="340" height="190" rx="18" fill="#E2F4F2"/>
+            <path d="M120 40C80 40 50 70 50 110C50 150 120 170 120 170C120 170 190 150 190 110C190 70 160 40 120 40Z" fill="#2DD4BF" opacity="0.25"/>
+            <circle cx="230" cy="95" r="50" fill="#087F73" opacity="0.15"/>
+            <rect x="105" y="80" width="30" height="50" rx="6" fill="#087F73"/>
+            <rect x="95" y="90" width="50" height="30" rx="6" fill="#087F73"/>
+            <path d="M200 120C200 100 220 85 240 85C260 85 280 100 280 120" stroke="#0F4C64" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="240" cy="65" r="14" fill="#0F4C64"/>
+            <path d="M40 70Q60 50 80 70T120 70" stroke="#2DD4BF" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </svg>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # =========================================================
-# INPUT / PREDICTION SECTION
+# MAIN CONTENT (FORM & RESULT)
 # =========================================================
 
-left, right = st.columns([1.05, 0.95], gap="large")
+left, right = st.columns([1.1, 0.9], gap="large")
 
-# INPUT FORM
 with left:
     st.markdown('<div class="section-title">👤 Personal Information</div>', unsafe_allow_html=True)
+    st.caption("Please enter your details below to estimate the insurance cost.")
 
     c1, c2 = st.columns(2)
     with c1:
@@ -305,11 +322,12 @@ with left:
     with c2:
         region = st.selectbox("Region", ["Northeast", "Northwest", "Southeast", "Southwest"])
 
+    st.write("")
     predict = st.button("Predict Insurance Cost")
 
-# RESULT CARD
 with right:
     st.markdown('<div class="section-title">💰 Prediction Result</div>', unsafe_allow_html=True)
+    st.caption("Your estimated annual medical insurance cost.")
 
     if predict:
         user_data = pd.DataFrame({
@@ -340,20 +358,21 @@ with right:
     <div class="result-heading">Prediction Result</div>
     <div class="result-subtitle">Your estimated annual medical insurance cost</div>
 </div>
-<div style="margin-top:25px; opacity:0.8; line-height:1.6; font-size: 15px;">
-Enter the patient information on the left and click "Predict Insurance Cost" to view the estimated charges.
+<div style="margin-top:25px; opacity:0.85; line-height:1.6; font-size: 15px;">
+Enter the details on the left and click "Predict Insurance Cost" to generate the estimate.
 </div>
-<div style="font-size: 12px; opacity: 0.5;">Awaiting input...</div>
+<div style="font-size: 12px; opacity: 0.5;">Awaiting user input...</div>
 </div>""",
             unsafe_allow_html=True
         )
 
 # =========================================================
-# MODEL PERFORMANCE
+# MODEL METRICS
 # =========================================================
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown('<div class="section-title">📊 Model Metrics & Performance</div>', unsafe_allow_html=True)
+st.caption("Evaluation metrics of the trained regression model on the test dataset.")
 
 m1, m2, m3, m4 = st.columns(4)
 
