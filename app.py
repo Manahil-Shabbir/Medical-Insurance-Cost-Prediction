@@ -1,151 +1,259 @@
 import streamlit as st
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_absolute_error
 
 
-# ============================================================
-# PAGE SETTINGS
-# ============================================================
+# =========================================================
+# PAGE CONFIG
+# =========================================================
 
 st.set_page_config(
-    page_title="HealthPredict",
+    page_title="Medical Insurance Cost Predictor",
     page_icon="🏥",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 
-# ============================================================
-# PROFESSIONAL THEME
-# ============================================================
+# =========================================================
+# CUSTOM CSS
+# =========================================================
 
 st.markdown("""
 <style>
 
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
 .stApp {
-    background-color: #F4F8FB;
+    background-color: #F7FBFC;
 }
 
 .block-container {
-    max-width: 1150px;
-    padding-top: 1.5rem;
-    padding-bottom: 3rem;
+    max-width: 1120px;
+    padding-top: 28px;
+    padding-bottom: 40px;
 }
 
-/* Hero */
-.hero-box {
+
+/* ================= HERO ================= */
+
+.hero {
     background: linear-gradient(
         135deg,
-        #123B5D,
-        #176B87
+        #EAF8FA 0%,
+        #F4FBFC 55%,
+        #E5F5F8 100%
     );
-    padding: 38px;
-    border-radius: 24px;
-    color: white;
-    margin-bottom: 28px;
-    box-shadow: 0 10px 28px rgba(18,59,93,0.15);
+
+    border-radius: 22px;
+    padding: 35px 38px;
+    border: 1px solid #D7EEF1;
+    margin-bottom: 32px;
 }
 
 .hero-title {
-    font-size: 42px;
+    color: #123B5D;
+    font-size: 38px;
     font-weight: 800;
-    margin-bottom: 8px;
-}
-
-.hero-subtitle {
-    font-size: 19px;
-    font-weight: 600;
-    color: #D7F1F0;
+    line-height: 1.1;
     margin-bottom: 12px;
 }
 
 .hero-text {
+    color: #587083;
     font-size: 15px;
-    color: #E6F2F5;
-    line-height: 1.6;
+    line-height: 1.7;
+    max-width: 600px;
 }
 
-/* Section titles */
+.badge {
+    display: inline-block;
+    background: #D6F5EF;
+    color: #087F73;
+    padding: 7px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+
+/* ================= SECTION ================= */
+
 .section-title {
     color: #123B5D;
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 750;
-    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
-/* Prediction */
-.result-box {
-    background: linear-gradient(
-        135deg,
-        #123B5D,
-        #0B8F87
-    );
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    color: white;
-    margin: 20px 0;
-    box-shadow: 0 10px 25px rgba(11,143,135,0.20);
+.section-subtitle {
+    color: #718393;
+    font-size: 14px;
+    margin-bottom: 20px;
 }
 
-.result-label {
-    font-size: 15px;
-    color: #DDF4F2;
+
+/* ================= CARDS ================= */
+
+.card {
+    background: white;
+    border: 1px solid #E1E9EE;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(18, 59, 93, 0.06);
 }
 
-.result-value {
-    font-size: 40px;
-    font-weight: 800;
-    margin-top: 5px;
+
+/* ================= INPUTS ================= */
+
+div[data-baseweb="select"] > div {
+    border-radius: 10px;
 }
 
-/* Button */
+input {
+    border-radius: 10px !important;
+}
+
+
+/* ================= BUTTON ================= */
+
 .stButton > button {
-    background-color: #0B8F87;
-    color: white;
-    border: none;
-    border-radius: 11px;
+    width: 100%;
     height: 50px;
+    border-radius: 11px;
+    border: none;
+
+    background: #087F73;
+    color: white;
+
     font-size: 16px;
     font-weight: 700;
+
+    box-shadow: 0 6px 16px rgba(8,127,115,0.18);
 }
 
 .stButton > button:hover {
-    background-color: #08736D;
+    background: #066E64;
     color: white;
 }
 
-/* Footer */
+
+/* ================= RESULT ================= */
+
+.result-card {
+    background: linear-gradient(
+        135deg,
+        #123B5D,
+        #155B78
+    );
+
+    border-radius: 18px;
+    padding: 30px;
+    color: white;
+
+    min-height: 190px;
+
+    box-shadow: 0 10px 25px rgba(18,59,93,0.18);
+}
+
+.result-small {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+}
+
+.result-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.result-value {
+    font-size: 36px;
+    font-weight: 800;
+}
+
+
+/* ================= INFO CARDS ================= */
+
+.info {
+    background: white;
+    border: 1px solid #E1E9EE;
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 135px;
+}
+
+.info-title {
+    color: #123B5D;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.info-text {
+    color: #718393;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* ================= DIVIDER ================= */
+
+hr {
+    border: none;
+    border-top: 1px solid #DCE7EC;
+    margin: 30px 0;
+}
+
+
+/* ================= FOOTER ================= */
+
 .footer {
     text-align: center;
-    color: #80909C;
+    color: #8A9AA5;
     font-size: 12px;
-    margin-top: 35px;
+    padding-top: 25px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# ============================================================
-# LOAD DATASET
-# ============================================================
+# =========================================================
+# LOAD DATA
+# =========================================================
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("insurance.csv")
+
+    data = pd.read_csv("insurance.csv")
+
+    return data
 
 
 df = load_data()
 
 
-# ============================================================
-# FEATURES AND TARGET
-# ============================================================
+# =========================================================
+# MODEL TRAINING
+# =========================================================
 
 X = df[
     [
@@ -160,10 +268,6 @@ X = df[
 
 y = df["charges"]
 
-
-# ============================================================
-# PREPROCESSING
-# ============================================================
 
 numeric_features = [
     "age",
@@ -185,6 +289,7 @@ preprocessor = ColumnTransformer(
             "passthrough",
             numeric_features
         ),
+
         (
             "categorical",
             OneHotEncoder(
@@ -197,21 +302,20 @@ preprocessor = ColumnTransformer(
 )
 
 
-# ============================================================
-# MODEL
-# ============================================================
-
 model = Pipeline(
     steps=[
-        ("preprocessor", preprocessor),
-        ("regressor", LinearRegression())
+        (
+            "preprocessor",
+            preprocessor
+        ),
+
+        (
+            "regressor",
+            LinearRegression()
+        )
     ]
 )
 
-
-# ============================================================
-# TRAIN / TEST
-# ============================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
@@ -220,41 +324,51 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
+
 model.fit(X_train, y_train)
 
 
-# ============================================================
-# HERO SECTION
-# ============================================================
+# =========================================================
+# MODEL EVALUATION
+# =========================================================
+
+predictions = model.predict(X_test)
+
+r2 = r2_score(y_test, predictions)
+mae = mean_absolute_error(y_test, predictions)
+
+
+# =========================================================
+# HERO
+# =========================================================
 
 hero_left, hero_right = st.columns(
-    [1.5, 1],
+    [1.55, 1],
     gap="large"
 )
+
 
 with hero_left:
 
     st.markdown(
-        """
-        <div class="hero-box">
+        '<div class="badge">✦ ML Powered Healthcare Prediction</div>',
+        unsafe_allow_html=True
+    )
 
-            <div class="hero-title">
-                🏥 HealthPredict
-            </div>
+    st.markdown(
+        '<div class="hero-title">'
+        'Medical Insurance Cost<br>'
+        'Predictor'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
-            <div class="hero-subtitle">
-                Medical Insurance Cost Predictor
-            </div>
-
-            <div class="hero-text">
-                Estimate annual medical insurance costs
-                using machine learning and patient information.
-                <br><br>
-                Simple • Fast • Data-Driven
-            </div>
-
-        </div>
-        """,
+    st.markdown(
+        '<div class="hero-text">'
+        'Estimate medical insurance costs using a machine learning '
+        'model trained on historical healthcare data. '
+        'Get a quick estimate based on personal information.'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -262,82 +376,93 @@ with hero_left:
 with hero_right:
 
     st.image(
-        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80",
         use_container_width=True
     )
 
 
-# ============================================================
-# PATIENT INFORMATION
-# ============================================================
+# =========================================================
+# MAIN AREA
+# =========================================================
 
 st.markdown(
-    '<div class="section-title">👤 Patient Information</div>',
+    '<div class="section-title">👤 Personal Information</div>',
     unsafe_allow_html=True
 )
 
-st.write(
-    "Enter the details below to generate an estimated "
-    "annual insurance cost."
+st.markdown(
+    '<div class="section-subtitle">'
+    'Please enter your details to estimate the insurance cost.'
+    '</div>',
+    unsafe_allow_html=True
 )
 
 
-col1, col2, col3 = st.columns(3)
+left, right = st.columns(
+    [1.05, 0.95],
+    gap="large"
+)
 
 
-with col1:
+# =========================================================
+# INPUT CARD
+# =========================================================
 
-    age = st.number_input(
-        "Age",
-        min_value=1,
-        max_value=100,
-        value=25,
-        step=1
+with left:
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+
+    st.markdown(
+        "### Personal Information"
     )
 
-
-with col2:
-
-    bmi = st.number_input(
-        "BMI",
-        min_value=10.0,
-        max_value=60.0,
-        value=23.5,
-        step=0.1
+    st.caption(
+        "Enter patient information below."
     )
 
+    c1, c2 = st.columns(2)
 
-with col3:
+    with c1:
 
-    children = st.number_input(
-        "Number of Children",
-        min_value=0,
-        max_value=10,
-        value=0,
-        step=1
-    )
+        age = st.number_input(
+            "Age",
+            min_value=1,
+            max_value=100,
+            value=30
+        )
 
+    with c2:
 
-col4, col5, col6 = st.columns(3)
+        sex = st.selectbox(
+            "Gender",
+            ["Female", "Male"]
+        )
 
+    c1, c2 = st.columns(2)
 
-with col4:
+    with c1:
 
-    gender = st.selectbox(
-        "Gender",
-        ["Female", "Male"]
-    )
+        bmi = st.number_input(
+            "BMI",
+            min_value=10.0,
+            max_value=60.0,
+            value=25.0,
+            step=0.1
+        )
 
+    with c2:
 
-with col5:
+        children = st.number_input(
+            "Children",
+            min_value=0,
+            max_value=10,
+            value=0
+        )
 
     smoker = st.selectbox(
         "Smoking Status",
         ["No", "Yes"]
     )
-
-
-with col6:
 
     region = st.selectbox(
         "Region",
@@ -349,222 +474,276 @@ with col6:
         ]
     )
 
+    st.write("")
 
-st.write("")
+    predict = st.button(
+        "💰  Predict Insurance Cost"
+    )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ============================================================
-# PREDICT
-# ============================================================
+# =========================================================
+# PREDICTION CARD
+# =========================================================
 
-predict = st.button(
-    "💰  Predict Insurance Cost",
-    use_container_width=True
+with right:
+
+    st.markdown(
+        "### 💰 Prediction"
+    )
+
+    st.caption(
+        "Your estimated annual medical insurance cost."
+    )
+
+
+    if predict:
+
+        input_data = pd.DataFrame(
+            {
+                "age": [age],
+                "sex": [sex.lower()],
+                "bmi": [bmi],
+                "children": [children],
+                "smoker": [smoker.lower()],
+                "region": [region.lower()]
+            }
+        )
+
+        prediction = model.predict(
+            input_data
+        )[0]
+
+
+        st.markdown(
+            f"""
+            <div class="result-card">
+
+                <div class="result-small">
+                    Prediction Result
+                </div>
+
+                <div class="result-title">
+                    Estimated Annual Medical Insurance Cost
+                </div>
+
+                <div class="result-value">
+                    ${prediction:,.2f}
+                </div>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        st.markdown(
+            """
+            <div class="result-card">
+
+                <div class="result-small">
+                    Prediction Result
+                </div>
+
+                <div class="result-title">
+                    Your prediction will appear here
+                </div>
+
+                <div style="
+                    font-size:15px;
+                    opacity:0.75;
+                    line-height:1.6;
+                ">
+                    Enter the patient information and
+                    click the prediction button.
+                </div>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
+# =========================================================
+# MODEL SUMMARY
+# =========================================================
+
+st.markdown("<hr>", unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="section-title">📊 Model Overview</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="section-subtitle">'
+    'Key information about the machine learning model.'
+    '</div>',
+    unsafe_allow_html=True
 )
 
 
-if predict:
+c1, c2, c3, c4 = st.columns(4)
 
-    input_data = pd.DataFrame(
-        {
-            "age": [age],
-            "sex": [gender.lower()],
-            "bmi": [bmi],
-            "children": [children],
-            "smoker": [smoker.lower()],
-            "region": [region.lower()]
-        }
-    )
 
-    prediction = model.predict(
-        input_data
-    )[0]
-
-    prediction = max(
-        0,
-        float(prediction)
-    )
-
-    st.success(
-        "Prediction generated successfully!"
-    )
+with c1:
 
     st.markdown(
-        f"""
-        <div class="result-box">
-
-            <div class="result-label">
-                ESTIMATED ANNUAL INSURANCE COST
+        """
+        <div class="info">
+            <div class="info-title">🤖 Algorithm</div>
+            <div class="info-text">
+                Multiple Linear Regression
             </div>
-
-            <div class="result-value">
-                ${prediction:,.2f}
-            </div>
-
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    result1, result2, result3 = st.columns(3)
 
-    with result1:
-        st.metric(
-            "Model",
-            "Linear Regression"
-        )
+with c2:
 
-    with result2:
-        st.metric(
-            "Prediction Type",
-            "Regression"
-        )
-
-    with result3:
-        st.metric(
-            "Training Data",
-            f"{len(X_train)} records"
-        )
-
-
-# ============================================================
-# MODEL INFORMATION
-# ============================================================
-
-st.divider()
-
-st.markdown(
-    '<div class="section-title">📊 About This Project</div>',
-    unsafe_allow_html=True
-)
-
-st.write(
-    "This application uses the Medical Insurance dataset "
-    "to predict insurance charges from demographic and "
-    "lifestyle features."
-)
-
-
-info1, info2, info3, info4 = st.columns(4)
-
-
-with info1:
-
-    st.info(
-        "**Dataset**\n\n"
-        "Medical Insurance Dataset"
+    st.markdown(
+        f"""
+        <div class="info">
+            <div class="info-title">📈 R² Score</div>
+            <div class="info-text">
+                {r2:.3f}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
-with info2:
+with c3:
 
-    st.info(
-        "**Algorithm**\n\n"
-        "Multiple Linear Regression"
+    st.markdown(
+        f"""
+        <div class="info">
+            <div class="info-title">📉 MAE</div>
+            <div class="info-text">
+                ${mae:,.0f}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
-with info3:
+with c4:
 
-    st.info(
-        "**Features**\n\n"
-        "Age • BMI • Children • Gender • "
-        "Smoker • Region"
+    st.markdown(
+        """
+        <div class="info">
+            <div class="info-title">📚 Dataset</div>
+            <div class="info-text">
+                Medical Insurance Dataset
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
-with info4:
-
-    st.info(
-        "**Split**\n\n"
-        "80% Training\n\n"
-        "20% Testing"
-    )
-
-
-# ============================================================
+# =========================================================
 # HOW IT WORKS
-# ============================================================
+# =========================================================
 
-st.divider()
+st.markdown("<hr>", unsafe_allow_html=True)
 
 st.markdown(
     '<div class="section-title">⚙️ How It Works</div>',
     unsafe_allow_html=True
 )
 
-step1, step2, step3 = st.columns(3)
-
-
-with step1:
-
-    st.subheader("01 · Enter")
-
-    st.write(
-        "Provide the patient's age, BMI, "
-        "children, gender, smoking status "
-        "and region."
-    )
-
-
-with step2:
-
-    st.subheader("02 · Process")
-
-    st.write(
-        "Categorical variables are encoded and "
-        "combined with numerical features."
-    )
-
-
-with step3:
-
-    st.subheader("03 · Predict")
-
-    st.write(
-        "The trained Linear Regression model "
-        "generates an estimated insurance cost."
-    )
-
-
-# ============================================================
-# DATASET PREVIEW
-# ============================================================
-
-with st.expander("🔎 View Dataset Preview"):
-
-    st.dataframe(
-        df.head(10),
-        use_container_width=True
-    )
-
-
-# ============================================================
-# DISCLAIMER
-# ============================================================
-
-st.divider()
-
-st.warning(
-    "⚠️ **Educational Disclaimer:** This application is "
-    "created for machine learning demonstration purposes. "
-    "The predicted value is an estimate and should not be "
-    "treated as an actual insurance quotation or professional "
-    "medical advice."
+st.markdown(
+    '<div class="section-subtitle">'
+    'A simple machine learning workflow from input to prediction.'
+    '</div>',
+    unsafe_allow_html=True
 )
 
 
-# ============================================================
-# FOOTER
-# ============================================================
+a, b, c = st.columns(3)
+
+
+with a:
+
+    st.markdown(
+        """
+        <div class="info">
+            <div class="info-title">
+                01 · Enter Information
+            </div>
+
+            <div class="info-text">
+                Provide age, BMI, smoking status,
+                number of children, gender and region.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+with b:
+
+    st.markdown(
+        """
+        <div class="info">
+            <div class="info-title">
+                02 · Process Data
+            </div>
+
+            <div class="info-text">
+                Numerical and categorical features
+                are processed through the ML pipeline.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+with c:
+
+    st.markdown(
+        """
+        <div class="info">
+            <div class="info-title">
+                03 · Generate Prediction
+            </div>
+
+            <div class="info-text">
+                The trained regression model estimates
+                the annual insurance charges.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# =========================================================
+# DISCLAIMER
+# =========================================================
+
+st.markdown("<hr>", unsafe_allow_html=True)
+
+st.warning(
+    "⚠️ **Disclaimer:** This application is an educational "
+    "machine learning project. The predicted amount is an "
+    "estimate and is not an actual insurance quotation "
+    "or professional medical advice."
+)
+
 
 st.markdown(
-    """
-    <div class="footer">
-        🏥 HealthPredict · Medical Insurance Cost Prediction
-        <br>
-        Built with Python · Scikit-learn · Streamlit
-    </div>
-    """,
+    '<div class="footer">'
+    'Medical Insurance Cost Prediction • Machine Learning Project'
+    '</div>',
     unsafe_allow_html=True
 )
