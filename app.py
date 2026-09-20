@@ -1,11 +1,17 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import pickle
 
-# =========================================================
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+
+
+# ============================================================
 # PAGE CONFIG
-# =========================================================
+# ============================================================
+
 st.set_page_config(
     page_title="HealthPredict | Insurance Cost Predictor",
     page_icon="🏥",
@@ -13,242 +19,314 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# =========================================================
-# COLORS / STYLE
-# =========================================================
+
+# ============================================================
+# CUSTOM THEME
+# ============================================================
+
 st.markdown("""
 <style>
 
-/* Main background */
-.stApp {
-    background:
-        linear-gradient(rgba(247,250,252,0.94), rgba(247,250,252,0.96)),
-        url("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=80");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
+    /* Main page */
+    .stApp {
+        background-color: #F4F8FB;
+    }
 
-/* Main content width */
-.block-container {
-    max-width: 1180px;
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-}
+    .block-container {
+        max-width: 1150px;
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+    }
 
-/* Titles */
-.main-title {
-    font-size: 48px;
-    font-weight: 800;
-    color: #12304A;
-    line-height: 1.1;
-    margin-bottom: 10px;
-}
+    /* Hide unnecessary Streamlit elements */
+    #MainMenu {
+        visibility: hidden;
+    }
 
-.subtitle {
-    font-size: 18px;
-    color: #587083;
-    line-height: 1.6;
-}
+    footer {
+        visibility: hidden;
+    }
 
-/* Small badge */
-.badge {
-    display: inline-block;
-    padding: 7px 15px;
-    border-radius: 30px;
-    background: #E7F7F5;
-    color: #087F73;
-    font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 15px;
-}
+    /* Headings */
+    h1, h2, h3 {
+        color: #123B5D !important;
+    }
 
-/* Section headings */
-.section-title {
-    color: #12304A;
-    font-size: 28px;
-    font-weight: 750;
-    margin-top: 30px;
-    margin-bottom: 5px;
-}
+    /* Hero */
+    .hero {
+        background: linear-gradient(
+            135deg,
+            #123B5D 0%,
+            #176B87 55%,
+            #159A8B 100%
+        );
 
-.section-subtitle {
-    color: #718393;
-    margin-bottom: 20px;
-}
+        padding: 38px 42px;
+        border-radius: 24px;
+        margin-bottom: 28px;
+        box-shadow: 0 12px 30px rgba(18, 59, 93, 0.15);
+    }
 
-/* Cards */
-.info-card {
-    background: rgba(255,255,255,0.92);
-    border: 1px solid #E4EBF0;
-    border-radius: 18px;
-    padding: 22px;
-    min-height: 145px;
-    box-shadow: 0 8px 25px rgba(18,48,74,0.06);
-}
+    .hero-small {
+        color: #BFEDE7;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
 
-.info-card h3 {
-    color: #12304A;
-    margin-bottom: 8px;
-}
+    .hero-title {
+        color: white;
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
 
-.info-card p {
-    color: #687A88;
-    line-height: 1.5;
-}
+    .hero-text {
+        color: #E2F2F5;
+        font-size: 15px;
+        line-height: 1.7;
+        max-width: 720px;
+    }
 
-/* Prediction result */
-.result-box {
-    background: linear-gradient(135deg, #12304A, #087F73);
-    border-radius: 22px;
-    padding: 28px;
-    color: white;
-    text-align: center;
-    margin-top: 25px;
-    box-shadow: 0 12px 30px rgba(18,48,74,0.18);
-}
+    /* Section heading */
+    .section-heading {
+        color: #123B5D;
+        font-size: 24px;
+        font-weight: 750;
+        margin-top: 25px;
+        margin-bottom: 4px;
+    }
 
-.result-label {
-    font-size: 15px;
-    opacity: 0.85;
-    margin-bottom: 6px;
-}
+    .section-text {
+        color: #718594;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
 
-.result-value {
-    font-size: 42px;
-    font-weight: 800;
-}
+    /* Result area */
+    .result-title {
+        color: #123B5D;
+        font-size: 24px;
+        font-weight: 750;
+        margin-top: 25px;
+    }
 
-/* Button */
-.stButton > button {
-    width: 100%;
-    height: 52px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(90deg, #087F73, #0B9B8D);
-    color: white;
-    font-size: 17px;
-    font-weight: 750;
-    box-shadow: 0 7px 18px rgba(8,127,115,0.22);
-    transition: 0.2s ease;
-}
+    /* Button */
+    .stButton > button {
+        background: #159A8B;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        height: 50px;
+        font-size: 16px;
+        font-weight: 700;
+        box-shadow: 0 5px 14px rgba(21, 154, 139, 0.20);
+    }
 
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(8,127,115,0.30);
-}
+    .stButton > button:hover {
+        background: #117D72;
+        color: white;
+    }
 
-/* Inputs */
-.stSelectbox label,
-.stNumberInput label {
-    color: #29465A !important;
-    font-weight: 650 !important;
-}
+    /* Inputs */
+    div[data-baseweb="input"],
+    div[data-baseweb="select"] {
+        border-radius: 8px;
+    }
 
-/* Divider */
-hr {
-    border: none;
-    height: 1px;
-    background: #DDE6EC;
-    margin: 35px 0;
-}
-
-/* Footer */
-.footer {
-    text-align: center;
-    color: #82919D;
-    font-size: 13px;
-    padding-top: 30px;
-}
+    /* Footer */
+    .app-footer {
+        text-align: center;
+        color: #8798A5;
+        font-size: 12px;
+        margin-top: 35px;
+        padding-top: 20px;
+        border-top: 1px solid #DCE6EC;
+    }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# =========================================================
-# LOAD MODEL
-# =========================================================
-@st.cache_resource
-def load_model():
-    with open("insurance_model.pkl", "rb") as file:
-        return pickle.load(file)
+# ============================================================
+# LOAD DATA
+# ============================================================
+
+@st.cache_data
+def load_data():
+    return pd.read_csv("insurance.csv")
 
 
-model = load_model()
+df = load_data()
 
 
-# =========================================================
-# HERO SECTION
-# =========================================================
-hero_left, hero_right = st.columns([1.25, 1], gap="large")
+# ============================================================
+# PREPARE DATA
+# ============================================================
 
-with hero_left:
-    st.markdown(
-        '<div class="badge">🏥 AI-Powered Healthcare Analytics</div>',
-        unsafe_allow_html=True
-    )
+X = df[
+    [
+        "age",
+        "sex",
+        "bmi",
+        "children",
+        "smoker",
+        "region"
+    ]
+]
 
-    st.markdown(
-        '<div class="main-title">HealthPredict</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div class="subtitle">
-        Estimate medical insurance costs using a machine learning model
-        based on personal and healthcare-related information.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.write("")
-    st.caption("✨ Fast • Simple • Data-Driven")
-
-with hero_right:
-    st.image(
-        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=85",
-        use_container_width=True
-    )
+y = df["charges"]
 
 
-st.markdown("<hr>", unsafe_allow_html=True)
+numeric_features = [
+    "age",
+    "bmi",
+    "children"
+]
+
+categorical_features = [
+    "sex",
+    "smoker",
+    "region"
+]
 
 
-# =========================================================
-# INPUT SECTION
-# =========================================================
+# ============================================================
+# PREPROCESSING
+# ============================================================
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        (
+            "numeric",
+            "passthrough",
+            numeric_features
+        ),
+        (
+            "categorical",
+            OneHotEncoder(
+                drop="first",
+                handle_unknown="ignore"
+            ),
+            categorical_features
+        )
+    ]
+)
+
+
+# ============================================================
+# MODEL
+# ============================================================
+
+model = Pipeline(
+    steps=[
+        (
+            "preprocessor",
+            preprocessor
+        ),
+        (
+            "regressor",
+            LinearRegression()
+        )
+    ]
+)
+
+
+# ============================================================
+# TRAIN / TEST SPLIT
+# ============================================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+
+# ============================================================
+# TRAIN MODEL
+# ============================================================
+
+model.fit(
+    X_train,
+    y_train
+)
+
+
+# ============================================================
+# HERO
+# ============================================================
+
+st.markdown("""
+<div class="hero">
+
+    <div class="hero-small">
+        🏥 MACHINE LEARNING • HEALTHCARE ANALYTICS
+    </div>
+
+    <div class="hero-title">
+        HealthPredict
+    </div>
+
+    <div class="hero-text">
+        Medical Insurance Cost Predictor
+        <br><br>
+        Estimate annual medical insurance costs using
+        a Multiple Linear Regression model trained on
+        historical healthcare data.
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
+
+# ============================================================
+# PATIENT INFORMATION
+# ============================================================
+
 st.markdown(
-    '<div class="section-title">Patient Information</div>',
+    '<div class="section-heading">👤 Patient Information</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="section-subtitle">Enter the details below to estimate the insurance cost.</div>',
+    '<div class="section-text">'
+    'Enter the information below to generate an estimated insurance cost.'
+    '</div>',
     unsafe_allow_html=True
 )
 
+
+# First row
 col1, col2, col3 = st.columns(3, gap="large")
 
+
 with col1:
+
     age = st.number_input(
         "Age",
         min_value=1,
         max_value=100,
-        value=30,
+        value=25,
         step=1
     )
+
+
+with col2:
 
     bmi = st.number_input(
         "BMI",
         min_value=10.0,
         max_value=60.0,
-        value=25.0,
+        value=23.5,
         step=0.1
     )
 
-with col2:
+
+with col3:
+
     children = st.number_input(
         "Number of Children",
         min_value=0,
@@ -257,149 +335,270 @@ with col2:
         step=1
     )
 
-    sex = st.selectbox(
+
+# Second row
+col4, col5, col6 = st.columns(3, gap="large")
+
+
+with col4:
+
+    gender = st.selectbox(
         "Gender",
-        ["Female", "Male"]
+        [
+            "Female",
+            "Male"
+        ]
     )
 
-with col3:
+
+with col5:
+
     smoker = st.selectbox(
         "Smoking Status",
-        ["No", "Yes"]
+        [
+            "No",
+            "Yes"
+        ]
     )
+
+
+with col6:
 
     region = st.selectbox(
         "Region",
-        ["Southwest", "Southeast", "Northwest", "Northeast"]
+        [
+            "Northeast",
+            "Northwest",
+            "Southeast",
+            "Southwest"
+        ]
     )
 
 
 st.write("")
 
 
-# =========================================================
+# ============================================================
+# PREDICT BUTTON
+# ============================================================
+
+predict = st.button(
+    "💰  Predict Insurance Cost",
+    use_container_width=True,
+    type="primary"
+)
+
+
+# ============================================================
 # PREDICTION
-# =========================================================
-if st.button("💰  Predict Insurance Cost"):
+# ============================================================
 
-    input_data = pd.DataFrame({
-        "age": [age],
-        "sex": [sex.lower()],
-        "bmi": [bmi],
-        "children": [children],
-        "smoker": [smoker.lower()],
-        "region": [region.lower()]
-    })
+if predict:
 
-    prediction = model.predict(input_data)[0]
+    input_data = pd.DataFrame(
+        {
+            "age": [age],
+            "sex": [gender.lower()],
+            "bmi": [bmi],
+            "children": [children],
+            "smoker": [smoker.lower()],
+            "region": [region.lower()]
+        }
+    )
+
+    prediction = model.predict(
+        input_data
+    )[0]
+
+    prediction = max(
+        0,
+        float(prediction)
+    )
 
     st.markdown(
-        f"""
-        <div class="result-box">
-            <div class="result-label">Estimated Annual Insurance Cost</div>
-            <div class="result-value">${prediction:,.2f}</div>
-        </div>
-        """,
+        '<div class="result-title">💰 Prediction Result</div>',
         unsafe_allow_html=True
     )
 
+    st.success(
+        "Prediction generated successfully."
+    )
 
-# =========================================================
-# PROJECT INFORMATION
-# =========================================================
+    result_col1, result_col2, result_col3 = st.columns(
+        3,
+        gap="large"
+    )
+
+    with result_col1:
+
+        st.metric(
+            "Estimated Annual Cost",
+            f"${prediction:,.2f}",
+            border=True
+        )
+
+    with result_col2:
+
+        st.metric(
+            "Machine Learning Model",
+            "Linear Regression",
+            border=True
+        )
+
+    with result_col3:
+
+        st.metric(
+            "Prediction Type",
+            "Regression",
+            border=True
+        )
+
+
+# ============================================================
+# MODEL INFORMATION
+# ============================================================
+
 st.markdown(
-    '<div class="section-title">About the Prediction</div>',
+    '<div class="section-heading">📊 Model Information</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="section-subtitle">A machine learning workflow for estimating healthcare insurance charges.</div>',
+    '<div class="section-text">'
+    'Key information about the machine learning workflow.'
+    '</div>',
     unsafe_allow_html=True
 )
 
-c1, c2, c3 = st.columns(3, gap="large")
 
-with c1:
-    st.markdown("""
-    <div class="info-card">
-        <h3>📊 Data Driven</h3>
-        <p>
-        Uses patient characteristics such as age, BMI,
-        smoking status, children and region.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c2:
-    st.markdown("""
-    <div class="info-card">
-        <h3>🤖 Machine Learning</h3>
-        <p>
-        Multiple Linear Regression is used to estimate
-        the expected insurance charges.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c3:
-    st.markdown("""
-    <div class="info-card">
-        <h3>⚡ Instant Prediction</h3>
-        <p>
-        Enter patient information and receive an
-        estimated insurance cost instantly.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+info1, info2, info3, info4 = st.columns(
+    4,
+    gap="medium"
+)
 
 
-# =========================================================
+with info1:
+
+    st.info(
+        "**Dataset**\n\n"
+        "Medical Insurance Dataset"
+    )
+
+
+with info2:
+
+    st.info(
+        "**Algorithm**\n\n"
+        "Multiple Linear Regression"
+    )
+
+
+with info3:
+
+    st.info(
+        "**Features**\n\n"
+        "Age, BMI, Children, Gender, "
+        "Smoking Status & Region"
+    )
+
+
+with info4:
+
+    st.info(
+        "**Data Split**\n\n"
+        "80% Training / 20% Testing"
+    )
+
+
+# ============================================================
 # HOW IT WORKS
-# =========================================================
+# ============================================================
+
 st.markdown(
-    '<div class="section-title">How It Works</div>',
+    '<div class="section-heading">⚙️ How It Works</div>',
     unsafe_allow_html=True
 )
 
-step1, step2, step3 = st.columns(3, gap="large")
+st.markdown(
+    '<div class="section-text">'
+    'From patient information to machine learning prediction.'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+
+step1, step2, step3 = st.columns(
+    3,
+    gap="large"
+)
+
 
 with step1:
-    st.markdown("""
-    <div class="info-card">
-        <h3>01 · Input</h3>
-        <p>Provide the patient's basic information and healthcare-related attributes.</p>
-    </div>
-    """, unsafe_allow_html=True)
+
+    st.markdown("### 01 · Enter Information")
+
+    st.write(
+        "Provide age, BMI, number of children, "
+        "gender, smoking status and region."
+    )
+
 
 with step2:
-    st.markdown("""
-    <div class="info-card">
-        <h3>02 · Process</h3>
-        <p>The trained machine learning pipeline processes the entered information.</p>
-    </div>
-    """, unsafe_allow_html=True)
+
+    st.markdown("### 02 · Process Data")
+
+    st.write(
+        "Numerical and categorical variables are "
+        "processed through a machine learning pipeline."
+    )
+
 
 with step3:
-    st.markdown("""
-    <div class="info-card">
-        <h3>03 · Predict</h3>
-        <p>The application generates an estimated annual insurance charge.</p>
-    </div>
-    """, unsafe_allow_html=True)
+
+    st.markdown("### 03 · Generate Prediction")
+
+    st.write(
+        "The trained regression model estimates "
+        "the expected annual insurance cost."
+    )
 
 
-# =========================================================
+# ============================================================
+# DATASET PREVIEW
+# ============================================================
+
+with st.expander("🔎 View Dataset Preview"):
+
+    st.dataframe(
+        df.head(10),
+        use_container_width=True
+    )
+
+
+# ============================================================
 # DISCLAIMER
-# =========================================================
-st.markdown("<hr>", unsafe_allow_html=True)
+# ============================================================
 
-st.info(
-    "⚠️ **Disclaimer:** This application provides a machine-learning-based "
-    "estimate for educational and demonstration purposes only. "
-    "It should not be considered a medical, financial, or insurance decision."
+st.warning(
+    "⚠️ **Disclaimer:** This application is an educational "
+    "machine learning project. The predicted amount is an "
+    "estimate and should not be considered an actual insurance "
+    "quotation or professional medical advice."
 )
 
+
+# ============================================================
+# FOOTER
+# ============================================================
+
 st.markdown(
-    '<div class="footer">HealthPredict · Medical Insurance Cost Prediction · Machine Learning Project</div>',
+    """
+    <div class="app-footer">
+        <b>HealthPredict</b> · Medical Insurance Cost Prediction
+        · Machine Learning Project
+        <br>
+        Built with Python, Scikit-learn & Streamlit
+    </div>
+    """,
     unsafe_allow_html=True
 )
