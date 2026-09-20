@@ -444,24 +444,12 @@ with hero1:
     )
 
     st.markdown(
-        """
-        <div class="hero-title">
-            Medical Insurance Cost<br>
-            Predictor
-        </div>
-        """,
+        """<div class="hero-title">Medical Insurance Cost<br>Predictor</div>""",
         unsafe_allow_html=True
     )
 
     st.markdown(
-        """
-        <div class="hero-text">
-            Estimate medical insurance costs using a
-            machine learning model trained on historical
-            healthcare data. Get a quick estimate based
-            on personal information.
-        </div>
-        """,
+        """<div class="hero-text">Estimate medical insurance costs using a machine learning model trained on historical healthcare data. Get a quick estimate based on personal information.</div>""",
         unsafe_allow_html=True
     )
 
@@ -469,19 +457,12 @@ with hero1:
 with hero2:
 
     st.markdown(
-        """
-        <div class="medical-art">
-
-            <div class="cross">✚</div>
-
-            <div class="doctor">👩‍⚕️</div>
-
-            <div class="heart">💙</div>
-
-            <div class="plus">➕</div>
-
-        </div>
-        """,
+        """<div class="medical-art">
+<div class="cross">✚</div>
+<div class="doctor">👩‍⚕️</div>
+<div class="heart">💙</div>
+<div class="plus">➕</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -496,9 +477,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="section-subtitle">'
-    'Enter the details below to estimate the insurance cost.'
-    '</div>',
+    '<div class="section-subtitle">Enter the details below to estimate the insurance cost.</div>',
     unsafe_allow_html=True
 )
 
@@ -591,7 +570,7 @@ with left:
 
 
     predict = st.button(
-        "💰  Predict Insurance Cost"
+        "💰 Predict Insurance Cost"
     )
 
 
@@ -613,9 +592,7 @@ with right:
     )
 
     st.markdown(
-        '<div class="section-subtitle">'
-        'Estimated annual medical insurance cost.'
-        '</div>',
+        '<div class="section-subtitle">Estimated annual medical insurance cost.</div>',
         unsafe_allow_html=True
     )
 
@@ -640,51 +617,24 @@ with right:
 
 
         st.markdown(
-            f"""
-            <div class="result-card">
-
-                <div class="result-label">
-                    Prediction Result
-                </div>
-
-                <div class="result-heading">
-                    Estimated Annual Cost
-                </div>
-
-                <div class="result-price">
-                    ${prediction:,.2f}
-                </div>
-
-            </div>
-            """,
+            f"""<div class="result-card">
+<div class="result-label">Prediction Result</div>
+<div class="result-heading">Estimated Annual Cost</div>
+<div class="result-price">${prediction:,.2f}</div>
+</div>""",
             unsafe_allow_html=True
         )
 
     else:
 
         st.markdown(
-            """
-            <div class="result-card">
-
-                <div class="result-label">
-                    Prediction Result
-                </div>
-
-                <div class="result-heading">
-                    Your estimate will appear here
-                </div>
-
-                <div style="
-                    margin-top:20px;
-                    opacity:0.75;
-                    line-height:1.6;
-                ">
-                    Enter the information and click
-                    "Predict Insurance Cost".
-                </div>
-
-            </div>
-            """,
+            """<div class="result-card">
+<div class="result-label">Prediction Result</div>
+<div class="result-heading">Your estimate will appear here</div>
+<div style="margin-top:20px; opacity:0.75; line-height:1.6;">
+Enter the information and click "Predict Insurance Cost".
+</div>
+</div>""",
             unsafe_allow_html=True
         )
 
@@ -701,9 +651,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="section-subtitle">'
-    'Performance of the trained regression model on the test data.'
-    '</div>',
+    '<div class="section-subtitle">Performance of the trained regression model on the test data.</div>',
     unsafe_allow_html=True
 )
 
@@ -714,19 +662,10 @@ m1, m2, m3, m4 = st.columns(4)
 with m1:
 
     st.markdown(
-        f"""
-        <div class="info-card">
-
-            <div class="info-title">
-                🤖 Algorithm
-            </div>
-
-            <div class="info-text">
-                Linear Regression
-            </div>
-
-        </div>
-        """,
+        f"""<div class="info-card">
+<div class="info-title">🤖 Algorithm</div>
+<div class="info-text">Linear Regression</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -734,19 +673,10 @@ with m1:
 with m2:
 
     st.markdown(
-        f"""
-        <div class="info-card">
-
-            <div class="info-title">
-                📈 R² Score
-            </div>
-
-            <div class="info-text">
-                {r2:.3f}
-            </div>
-
-        </div>
-        """,
+        f"""<div class="info-card">
+<div class="info-title">📈 R² Score</div>
+<div class="info-text">{r2:.3f}</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -754,19 +684,10 @@ with m2:
 with m3:
 
     st.markdown(
-        f"""
-        <div class="info-card">
-
-            <div class="info-title">
-                📉 MAE
-            </div>
-
-            <div class="info-text">
-                ${mae:,.0f}
-            </div>
-
-        </div>
-        """,
+        f"""<div class="info-card">
+<div class="info-title">📉 MAE</div>
+<div class="info-text">${mae:,.0f}</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -774,19 +695,10 @@ with m3:
 with m4:
 
     st.markdown(
-        f"""
-        <div class="info-card">
-
-            <div class="info-title">
-                📚 Records
-            </div>
-
-            <div class="info-text">
-                {len(df):,} records
-            </div>
-
-        </div>
-        """,
+        f"""<div class="info-card">
+<div class="info-title">📚 Records</div>
+<div class="info-text">{len(df):,} records</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -809,20 +721,10 @@ w1, w2, w3 = st.columns(3)
 with w1:
 
     st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-title">
-                01 · Enter Information
-            </div>
-
-            <div class="info-text">
-                Enter age, BMI, smoking status,
-                children, gender and region.
-            </div>
-
-        </div>
-        """,
+        """<div class="info-card">
+<div class="info-title">01 · Enter Information</div>
+<div class="info-text">Enter age, BMI, smoking status, children, gender and region.</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -830,20 +732,10 @@ with w1:
 with w2:
 
     st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-title">
-                02 · Process Data
-            </div>
-
-            <div class="info-text">
-                Numerical and categorical features
-                are processed by the ML pipeline.
-            </div>
-
-        </div>
-        """,
+        """<div class="info-card">
+<div class="info-title">02 · Process Data</div>
+<div class="info-text">Numerical and categorical features are processed by the ML pipeline.</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -851,20 +743,10 @@ with w2:
 with w3:
 
     st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-title">
-                03 · Generate Prediction
-            </div>
-
-            <div class="info-text">
-                The trained regression model
-                estimates annual insurance charges.
-            </div>
-
-        </div>
-        """,
+        """<div class="info-card">
+<div class="info-title">03 · Generate Prediction</div>
+<div class="info-text">The trained regression model estimates annual insurance charges.</div>
+</div>""",
         unsafe_allow_html=True
     )
 
@@ -884,10 +766,6 @@ st.warning(
 
 
 st.markdown(
-    """
-    <div class="footer">
-        Medical Insurance Cost Prediction · Machine Learning Project
-    </div>
-    """,
+    """<div class="footer">Medical Insurance Cost Prediction · Machine Learning Project</div>""",
     unsafe_allow_html=True
 )
