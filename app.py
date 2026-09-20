@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import base64
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
@@ -21,6 +22,18 @@ st.set_page_config(
 )
 
 # =========================================================
+# HELPER FUNCTION FOR IMAGE ENCODING
+# =========================================================
+
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode("utf-8")
+    return None
+
+img_base64 = get_base64_image("hero.png")
+
+# =========================================================
 # STYLES AND CUSTOM CSS
 # =========================================================
 
@@ -34,19 +47,41 @@ st.markdown("""
 
 /* Container Spacing */
 .block-container {
-    max-width: 1150px !important;
+    max-width: 1100px !important;
     padding-top: 1.5rem !important;
     padding-bottom: 3rem !important;
 }
 
-/* Hero Section Banner */
-.hero-box {
+/* Integrated Hero Banner Card */
+.hero-card-container {
     background: linear-gradient(135deg, #E0F2FE 0%, #F0FDFA 100%);
     border: 1px solid #BAE6FD;
     border-radius: 20px;
-    padding: 32px 36px;
+    padding: 28px 32px;
     margin-bottom: 25px;
     box-shadow: 0 4px 20px rgba(2, 132, 199, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.hero-text-content {
+    flex: 1.2;
+}
+
+.hero-image-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image-content img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 12px;
 }
 
 .badge {
@@ -62,7 +97,7 @@ st.markdown("""
 }
 
 .hero-title {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 800;
     color: #0F172A;
     line-height: 1.2;
@@ -74,7 +109,6 @@ st.markdown("""
     color: #334155;
     font-size: 14px;
     line-height: 1.6;
-    max-width: 540px;
 }
 
 /* Headings */
@@ -269,31 +303,23 @@ r2 = r2_score(y_test, test_predictions)
 mae = mean_absolute_error(y_test, test_predictions)
 
 # =========================================================
-# HERO SECTION
+# INTEGRATED HERO SECTION
 # =========================================================
 
-hero_col1, hero_col2 = st.columns([1.35, 1], gap="medium")
+image_html = f'<img src="data:image/png;base64,{img_base64}" alt="Healthcare Illustration"/>' if img_base64 else ''
 
-with hero_col1:
-    st.markdown("""
-    <div class="hero-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-        <div>
-            <div class="badge">✦ ML Powered Healthcare</div>
-            <div class="hero-title">Medical Insurance Cost Predictor</div>
-            <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
-        </div>
+st.markdown(f"""
+<div class="hero-card-container">
+    <div class="hero-text-content">
+        <div class="badge">✦ ML Powered Healthcare</div>
+        <div class="hero-title">Medical Insurance Cost Predictor</div>
+        <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
     </div>
-    """, unsafe_allow_html=True)
-
-with hero_col2:
-    image_path = "hero.png"
-    if os.path.exists(image_path):
-        image = Image.open(image_path)
-        st.image(image, use_container_width=True)
-    else:
-        st.info("💡 `hero.png` image repository mein uploaded hai.")
-
-st.markdown("<hr>", unsafe_allow_html=True)
+    <div class="hero-image-content">
+        {image_html}
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # =========================================================
 # MAIN SECTION (INPUTS & RESULT)
