@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+from PIL import Image
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -43,7 +44,7 @@ st.markdown("""
     background: linear-gradient(135deg, #E0F2FE 0%, #E6F4F1 100%);
     border: 1px solid #BEE3F8;
     border-radius: 20px;
-    padding: 35px 40px;
+    padding: 30px 35px;
     margin-bottom: 30px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
@@ -72,7 +73,7 @@ st.markdown("""
     color: #334155;
     font-size: 15px;
     line-height: 1.6;
-    max-width: 550px;
+    max-width: 520px;
 }
 
 /* Section Headings */
@@ -196,14 +197,6 @@ hr {
     margin: 30px 0;
 }
 
-/* Custom styling for Hero Banner Image */
-.hero-img {
-    max-width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-    border-radius: 12px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -274,23 +267,30 @@ r2 = r2_score(y_test, test_predictions)
 mae = mean_absolute_error(y_test, test_predictions)
 
 # =========================================================
-# HERO SECTION (WITH HIGH-QUALITY HEALTHCARE VECTOR IMAGE)
+# HERO SECTION (LOCAL IMAGE EMBEDDING)
 # =========================================================
 
-st.markdown("""
-<div class="hero-card">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-        <div style="flex: 1; min-width: 300px;">
-            <div class="badge">✦ ML Powered Healthcare</div>
-            <div class="hero-title">Medical Insurance Cost Predictor</div>
-            <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
-        </div>
-        <div style="flex: 0.8; min-width: 260px; text-align: center;">
-            <img src="https://cdni.iconscout.com/illustration/premium/thumb/health-insurance-illustration-download-in-svg-png-gif-file-formats--medical-claim-document-policy-security-pack-services-illustrations-4378772.png" class="hero-img" alt="Medical Insurance Vector Illustration"/>
-        </div>
+hero_col1, hero_col2 = st.columns([1.2, 1], gap="medium")
+
+with hero_col1:
+    st.markdown("""
+    <div class="hero-card" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <div class="badge">✦ ML Powered Healthcare</div>
+        <div class="hero-title">Medical Insurance Cost Predictor</div>
+        <div class="hero-text">Estimate your annual medical insurance cost using a supervised machine learning model trained on historical healthcare demographic data.</div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+with hero_col2:
+    image_path = "hero.png"
+    if os.path.exists(image_path):
+        image = Image.open(image_path)
+        st.image(image, use_container_width=True)
+    else:
+        # Fallback in case image file is not found in repository
+        st.info("💡 `hero.png` image repository mein upload karein.")
+
+st.markdown("<hr>", unsafe_allow_html=True)
 
 # =========================================================
 # MAIN SECTION (INPUTS & RESULT)
