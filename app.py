@@ -20,42 +20,115 @@ st.set_page_config(
 
 
 # ============================================================
-# SIMPLE PROFESSIONAL THEME
+# PROFESSIONAL THEME
 # ============================================================
 
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #F5F8FA;
-    }
+st.markdown("""
+<style>
 
-    .block-container {
-        max-width: 1150px;
-        padding-top: 2rem;
-    }
+.stApp {
+    background-color: #F4F8FB;
+}
 
-    h1, h2, h3 {
-        color: #123B5D;
-    }
+.block-container {
+    max-width: 1150px;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
 
-    .stButton button {
-        background-color: #0B8F87;
-        color: white;
-        border-radius: 10px;
-        border: none;
-        height: 48px;
-        font-weight: 700;
-    }
+/* Hero */
+.hero-box {
+    background: linear-gradient(
+        135deg,
+        #123B5D,
+        #176B87
+    );
+    padding: 38px;
+    border-radius: 24px;
+    color: white;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 28px rgba(18,59,93,0.15);
+}
 
-    .stButton button:hover {
-        background-color: #08766F;
-        color: white;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+.hero-title {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.hero-subtitle {
+    font-size: 19px;
+    font-weight: 600;
+    color: #D7F1F0;
+    margin-bottom: 12px;
+}
+
+.hero-text {
+    font-size: 15px;
+    color: #E6F2F5;
+    line-height: 1.6;
+}
+
+/* Section titles */
+.section-title {
+    color: #123B5D;
+    font-size: 25px;
+    font-weight: 750;
+    margin-top: 15px;
+}
+
+/* Prediction */
+.result-box {
+    background: linear-gradient(
+        135deg,
+        #123B5D,
+        #0B8F87
+    );
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    margin: 20px 0;
+    box-shadow: 0 10px 25px rgba(11,143,135,0.20);
+}
+
+.result-label {
+    font-size: 15px;
+    color: #DDF4F2;
+}
+
+.result-value {
+    font-size: 40px;
+    font-weight: 800;
+    margin-top: 5px;
+}
+
+/* Button */
+.stButton > button {
+    background-color: #0B8F87;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.stButton > button:hover {
+    background-color: #08736D;
+    color: white;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    color: #80909C;
+    font-size: 12px;
+    margin-top: 35px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # ============================================================
@@ -137,7 +210,7 @@ model = Pipeline(
 
 
 # ============================================================
-# TRAIN / TEST SPLIT
+# TRAIN / TEST
 # ============================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -147,43 +220,65 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-
-# ============================================================
-# TRAIN MODEL
-# ============================================================
-
 model.fit(X_train, y_train)
 
 
 # ============================================================
-# HEADER
+# HERO SECTION
 # ============================================================
 
-st.title("🏥 HealthPredict")
-
-st.subheader("Medical Insurance Cost Predictor")
-
-st.write(
-    "Estimate annual medical insurance costs using "
-    "a Multiple Linear Regression machine learning model."
+hero_left, hero_right = st.columns(
+    [1.5, 1],
+    gap="large"
 )
 
-st.caption(
-    "Healthcare Analytics • Machine Learning • Regression"
+with hero_left:
+
+    st.markdown(
+        """
+        <div class="hero-box">
+
+            <div class="hero-title">
+                🏥 HealthPredict
+            </div>
+
+            <div class="hero-subtitle">
+                Medical Insurance Cost Predictor
+            </div>
+
+            <div class="hero-text">
+                Estimate annual medical insurance costs
+                using machine learning and patient information.
+                <br><br>
+                Simple • Fast • Data-Driven
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+with hero_right:
+
+    st.image(
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=85",
+        use_container_width=True
+    )
+
+
+# ============================================================
+# PATIENT INFORMATION
+# ============================================================
+
+st.markdown(
+    '<div class="section-title">👤 Patient Information</div>',
+    unsafe_allow_html=True
 )
 
-st.divider()
-
-
-# ============================================================
-# INPUT SECTION
-# ============================================================
-
-st.header("👤 Patient Information")
-
 st.write(
-    "Enter the patient's information to generate "
-    "an estimated annual insurance cost."
+    "Enter the details below to generate an estimated "
+    "annual insurance cost."
 )
 
 
@@ -259,18 +354,14 @@ st.write("")
 
 
 # ============================================================
-# PREDICTION BUTTON
+# PREDICT
 # ============================================================
 
 predict = st.button(
-    "💰 Predict Insurance Cost",
+    "💰  Predict Insurance Cost",
     use_container_width=True
 )
 
-
-# ============================================================
-# PREDICTION
-# ============================================================
 
 if predict:
 
@@ -285,37 +376,54 @@ if predict:
         }
     )
 
-    prediction = model.predict(input_data)[0]
+    prediction = model.predict(
+        input_data
+    )[0]
 
-    prediction = max(0, float(prediction))
+    prediction = max(
+        0,
+        float(prediction)
+    )
 
-    st.divider()
+    st.success(
+        "Prediction generated successfully!"
+    )
 
-    st.header("💰 Prediction Result")
+    st.markdown(
+        f"""
+        <div class="result-box">
 
-    st.success("Prediction generated successfully!")
+            <div class="result-label">
+                ESTIMATED ANNUAL INSURANCE COST
+            </div>
 
-    result_col1, result_col2, result_col3 = st.columns(3)
+            <div class="result-value">
+                ${prediction:,.2f}
+            </div>
 
-    with result_col1:
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        st.metric(
-            "Estimated Annual Cost",
-            f"${prediction:,.2f}"
-        )
+    result1, result2, result3 = st.columns(3)
 
-    with result_col2:
-
+    with result1:
         st.metric(
             "Model",
             "Linear Regression"
         )
 
-    with result_col3:
-
+    with result2:
         st.metric(
-            "Task",
+            "Prediction Type",
             "Regression"
+        )
+
+    with result3:
+        st.metric(
+            "Training Data",
+            f"{len(X_train)} records"
         )
 
 
@@ -325,7 +433,17 @@ if predict:
 
 st.divider()
 
-st.header("📊 Model Information")
+st.markdown(
+    '<div class="section-title">📊 About This Project</div>',
+    unsafe_allow_html=True
+)
+
+st.write(
+    "This application uses the Medical Insurance dataset "
+    "to predict insurance charges from demographic and "
+    "lifestyle features."
+)
+
 
 info1, info2, info3, info4 = st.columns(4)
 
@@ -350,16 +468,17 @@ with info3:
 
     st.info(
         "**Features**\n\n"
-        "Age, BMI, Children, Gender, "
-        "Smoking Status and Region"
+        "Age • BMI • Children • Gender • "
+        "Smoker • Region"
     )
 
 
 with info4:
 
     st.info(
-        "**Data Split**\n\n"
-        "80% Training / 20% Testing"
+        "**Split**\n\n"
+        "80% Training\n\n"
+        "20% Testing"
     )
 
 
@@ -369,44 +488,47 @@ with info4:
 
 st.divider()
 
-st.header("⚙️ How It Works")
-
+st.markdown(
+    '<div class="section-title">⚙️ How It Works</div>',
+    unsafe_allow_html=True
+)
 
 step1, step2, step3 = st.columns(3)
 
 
 with step1:
 
-    st.subheader("01 · Input")
+    st.subheader("01 · Enter")
 
     st.write(
-        "Enter age, BMI, children, gender, "
-        "smoking status and region."
+        "Provide the patient's age, BMI, "
+        "children, gender, smoking status "
+        "and region."
     )
 
 
 with step2:
 
-    st.subheader("02 · Processing")
+    st.subheader("02 · Process")
 
     st.write(
-        "The data is processed using numerical "
-        "and categorical feature preprocessing."
+        "Categorical variables are encoded and "
+        "combined with numerical features."
     )
 
 
 with step3:
 
-    st.subheader("03 · Prediction")
+    st.subheader("03 · Predict")
 
     st.write(
-        "The trained regression model estimates "
-        "the annual medical insurance charges."
+        "The trained Linear Regression model "
+        "generates an estimated insurance cost."
     )
 
 
 # ============================================================
-# DATA PREVIEW
+# DATASET PREVIEW
 # ============================================================
 
 with st.expander("🔎 View Dataset Preview"):
@@ -424,14 +546,25 @@ with st.expander("🔎 View Dataset Preview"):
 st.divider()
 
 st.warning(
-    "⚠️ This application is an educational machine learning "
-    "project. Predictions are estimates and should not be "
-    "considered actual insurance quotations or professional "
+    "⚠️ **Educational Disclaimer:** This application is "
+    "created for machine learning demonstration purposes. "
+    "The predicted value is an estimate and should not be "
+    "treated as an actual insurance quotation or professional "
     "medical advice."
 )
 
 
-st.caption(
-    "HealthPredict • Medical Insurance Cost Prediction • "
-    "Built with Python, Scikit-learn and Streamlit"
+# ============================================================
+# FOOTER
+# ============================================================
+
+st.markdown(
+    """
+    <div class="footer">
+        🏥 HealthPredict · Medical Insurance Cost Prediction
+        <br>
+        Built with Python · Scikit-learn · Streamlit
+    </div>
+    """,
+    unsafe_allow_html=True
 )
